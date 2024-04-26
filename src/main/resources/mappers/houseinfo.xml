@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.home.mapper.HouseInfoMapper">
+
+	<select id="findAllbyDongCode" parameterType="String" resultType="HouseInfoDto">
+		select buildYear, roadName, dong, dongCode, apartmentName, jibun, lng, lat
+		from houseinfo
+		where dongCode = #{code}
+		order by apartmentName
+	</select>
+	<select id="findAllbyKeyword" parameterType="String" resultType="HouseInfoDto">
+		select buildYear, roadName, dong, dongCode, apartmentName, jibun, lng, lat
+		from houseinfo
+		where apartmentName like '%${name}%'
+		order by apartmentName
+	</select>
+</mapper>
