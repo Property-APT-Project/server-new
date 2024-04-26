@@ -5,15 +5,14 @@
 <mapper namespace="com.home.mapper.HouseInfoMapper">
 
 	<select id="findAllbyDongCode" parameterType="String" resultType="HouseInfoDto">
-		select buildYear, roadName, dong, dongCode, apartmentName, jibun, lng, lat
-		from houseinfo
-		where dongCode = #{code}
-		order by apartmentName
+        SELECT buildYear, roadName, dong, dongCode, apartmentName AS aptName, jibun, lng, lat
+        FROM houseinfo 
+        WHERE dongCode like #{dongCode};
 	</select>
+	
 	<select id="findAllbyKeyword" parameterType="String" resultType="HouseInfoDto">
-		select buildYear, roadName, dong, dongCode, apartmentName, jibun, lng, lat
-		from houseinfo
-		where apartmentName like '%${name}%'
-		order by apartmentName
+        SELECT buildYear, roadName, dong, dongCode, apartmentName AS aptName, jibun, lng, lat
+        FROM houseinfo
+        WHERE apartmentName LIKE CONCAT('%', #{aptName}, '%');
 	</select>
 </mapper>

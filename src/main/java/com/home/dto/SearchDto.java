@@ -11,11 +11,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SearchDto implements Comparable<SearchDto>{
 	private String keyword;
-	private int cnt;
+	private int count;
 
 	@Override
 	public int compareTo(SearchDto o) {
-		return  - this.cnt + o.cnt;
+		return  - this.count + o.count;
 	}
 
 	

@@ -27,6 +27,7 @@ public class SearchRestController {
 	@PostMapping("/{keyword}")
 	public ResponseEntity<?> updateKeywordCount(@PathVariable("keyword") String keyword){
 		try {
+			System.out.println(keyword);
 			service.updateKeywordCount(keyword);
 			return ResponseEntity.status(HttpStatus.OK).body(keyword);
 		} catch (Exception e) {

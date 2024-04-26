@@ -36,7 +36,7 @@ public class HouseInfoRestController {
 	@GetMapping("/keyword/{name}")
 	public ResponseEntity<?> getHouseInfoListByKeyword(@PathVariable("name") String name){
 		try {
-			List<HouseInfoDto> houseInfoList = service.findAllbyDongCode(name);
+			List<HouseInfoDto> houseInfoList = service.findAllbyKeyword(name);
 			return ResponseEntity.status(HttpStatus.OK).body(houseInfoList);
 		} catch (Exception e) {
 			e.printStackTrace();
