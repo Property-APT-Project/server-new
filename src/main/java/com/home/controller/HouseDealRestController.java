@@ -48,7 +48,7 @@ public class HouseDealRestController {
 	@GetMapping("/{aptName}/{year}/{month}")
 	public ResponseEntity<?> getDealListByAptNameYearMonth(@PathVariable("aptName") String aptName, @PathVariable("year") int year, @PathVariable("month") int month){
 		try {
-			List<HouseDealDto> dealList= service.findAllByAptCode(aptName, month, month);
+			List<HouseDealDto> dealList= service.findAllByAptCode(aptName, year, month);
 			return ResponseEntity.status(HttpStatus.OK).body(dealList);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class HouseDealServiceImpl implements HouseDealService {
 	
-    private HouseDealMapper mapper;
+    private final HouseDealMapper mapper;
     
 
 	@Override
