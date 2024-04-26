@@ -23,8 +23,3 @@ mybatis:
   type-aliases-package: com.home.dto;
   
   
-#log
-logging:
-  level:
-    root: info
-    com.home: debug

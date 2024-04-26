@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.home.mapper.HouseDealMapper">
+
+	<select id="findAllByAptCode" parameterType="map" resultType="HouseDealDto">
+		select hd.dealAmount, hd.dealYear, hd.dealMonth, hd.area, hd.floor, hi.aptCode, hi.apartmentName
+		from houseinfo hi join housedeal hd
+		where hi.aptCode = hd.aptCode and apartmentName = #{aptName}
+		order by hd.dealYear desc, hd.dealMonth desc
+	</select>
+	<select id="findAllByAptCodeYear" parameterType="map" resultType="HouseDealDto">
+		select hd.dealAmount, hd.dealYear, hd.dealMonth, hd.area, hd.floor, hi.aptCode, hi.apartmentName
+		from houseinfo hi join housedeal hd
+		where hi.aptCode = hd.aptCode and apartmentName = #{aptName} and dealYear = #{year}
+		order by hd.dealYear desc, hd.dealMonth desc
+	</select>
+	<select id="findAllByAptCodeYearMonth" parameterType="map" resultType="HouseDealDto">
+		select hd.dealAmount, hd.dealYear, hd.dealMonth, hd.area, hd.floor, hi.aptCode, hi.apartmentName
+		from houseinfo hi join housedeal hd
+		where hi.aptCode = hd.aptCode and apartmentName = #{aptName} and dealYear = #{year} and dealMonth = #{month}
+		order by hd.dealYear desc, hd.dealMonth desc
+	</select>
+</mapper>
