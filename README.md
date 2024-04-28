@@ -2,6 +2,67 @@
 
 <br>
 
+## member-controller
+회원 컨트롤러
+
+[1] 회원가입
+- URI: /members/join
+- HTTP Method: POST
+- Response: 응답코드,  `String`
+
+    ```string
+        성공적으로 회원가입되었습니다.
+    ```
+
+<br>
+
+[2] 회원정보수정
+- URI: /members/profile/{memberId}
+- HTTP Method: PUT
+- Response: 응답코드,  `String`
+
+    ```string
+        성공적으로 회원정보수정되었습니다.
+    ```
+
+<br>
+
+[3] 회원삭제
+- URI: /members/leave/{memberId}
+- HTTP Method: DELETE
+- Response: 응답코드,  `String`
+
+    ```string
+        성공적으로 회원삭제되었습니다.
+    ```
+
+<br>
+
+[4] 로그인
+- URI: /members/login
+- HTTP Method: POST
+- Response: 응답코드,  `token`
+
+    ```string
+        {
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMTIzIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        }
+    ```
+
+<br>
+
+[5] 로그아웃
+- URI: /members/logout
+- HTTP Method: GET
+- Response: 응답코드,  `String`
+
+    ```string
+        성공적으로 로그아웃되었습니다.
+    ```
+
+<br>
+
+
 ## dong-code-rest-controller
 동 코드 조회 컨트롤러
 
@@ -202,3 +263,81 @@
         }, ...
     ]
     ```
+
+
+
+## announcement-controller
+공지사항 컨트롤러
+
+[1] 공지사항 등록
+- URI: /announcements/new-announcement
+- HTTP Method: POST
+- Response: 응답코드,  `String`
+
+    ```string
+        성공적으로 등록되었습니다.
+    ```
+
+<br>
+
+[2] 공지사항 목록
+- URI: /announcements
+- HTTP Method: GET
+- Response: 응답코드,  `List<Announcement>`
+
+    ```json
+    [
+        {
+            "articleNo": 0,
+            "userId": "admin", 
+            "subject": "hello",
+            "content": "hello world",
+            "hit": 5,
+            "registerTime": "2024-04-28 20:03:20"
+        }, ...
+    ]
+    ```
+
+<br>
+
+[3] 공지사항 수정
+- URI: /announcements/{announcementId}
+- HTTP Method: PUT
+- Response: 응답코드,  `String`
+
+    ```string
+        성공적으로 수정되었습니다.
+    ```
+
+<br>
+
+[4] 공지사항 삭제
+- URI: /announcements/{announcementId}
+- HTTP Method: DELETE
+- Response: 응답코드,  `String`
+
+    ```string
+        성공적으로 삭제되었습니다.
+    ```
+
+<br>
+
+[5] 공지사항 검색
+- URI: /announcements/search
+- HTTP Method: GET
+- Response: 응답코드,  `List<Announcement>`
+
+    ```json
+    [
+        {
+            "articleNo": 0,
+            "userId": "admin", 
+            "subject": "hello",
+            "content": "hello world",
+            "hit": 5,
+            "registerTime": "2024-04-28 20:03:20"
+        }, ...
+    ]
+    ```
+
+<br>
