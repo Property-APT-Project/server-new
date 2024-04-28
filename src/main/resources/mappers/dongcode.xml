@@ -10,7 +10,7 @@
 		where sidoName is not null
 	</select>
 
-	<select id="findGugunBySido" parameterType="DongCodeDto"  resultType="DongCodeDto">
+	<select id="findGugunBySido" parameterType="String"  resultType="DongCodeDto">
 		select distinct left(dongCode, 5) dongCode, gugunName
 		from dongcode
 		where left(dongCode, 2) = #{dongCode}
@@ -19,7 +19,7 @@
 	</select>
 	
 	
-	<select id="findDongByGugun" parameterType="DongCodeDto"  resultType="DongCodeDto">
+	<select id="findDongByGugun" parameterType="String"  resultType="DongCodeDto">
 		select distinct dongCode, dongName
 		from dongcode
 		where left(dongCode, 5) = #{dongCode}

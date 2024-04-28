@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,7 +23,7 @@ public class DongCodeRestController {
 		this.service = service;
 	}
 	
-	@GetMapping("/sido")
+	@GetMapping("/dong-code/sido")
 	public ResponseEntity<?> getAllSidoList(){
 		try {
 			List<DongCodeDto> sidoList= service.findAllSido();
@@ -34,8 +35,8 @@ public class DongCodeRestController {
 	}
 	
 	
-	@GetMapping("/gugun")
-	public ResponseEntity<?> getAllGugunList(@RequestBody DongCodeDto sido){
+	@GetMapping("/dong-code/gugun/{sido}")
+	public ResponseEntity<?> getAllGugunList(@PathVariable("sido") String sido){
 		try {
 			List<DongCodeDto> gugunList= service.findGugunBySido(sido);
 			return ResponseEntity.status(HttpStatus.OK).body(gugunList);
@@ -46,8 +47,8 @@ public class DongCodeRestController {
 	}
 	
 	
-	@GetMapping("/dong")
-	public ResponseEntity<?> getAllDongList(@RequestBody DongCodeDto gugun){
+	@GetMapping("/dong-code/dong/{gugun}")
+	public ResponseEntity<?> getAllDongList(@PathVariable("gugun") String gugun){
 		try {
 			System.out.println(gugun);
 			List<DongCodeDto> dongList= service.findDongByGugun(gugun);

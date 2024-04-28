@@ -21,12 +21,12 @@ public class DongCodeServiceImpl implements DongCodeService {
 	}
 
 	@Override
-	public List<DongCodeDto> findGugunBySido(DongCodeDto sido) throws Exception {
+	public List<DongCodeDto> findGugunBySido(String sido) throws Exception {
 		return mapper.findGugunBySido(sido);
 	}
 
 	@Override
-	public List<DongCodeDto> findDongByGugun(DongCodeDto gugun) throws Exception {
+	public List<DongCodeDto> findDongByGugun(String gugun) throws Exception {
 		return mapper.findDongByGugun(gugun);
 	}
 

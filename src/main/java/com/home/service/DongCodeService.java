@@ -7,6 +7,6 @@ import com.home.dto.DongCodeDto;
 
 public interface DongCodeService {
 	List<DongCodeDto> findAllSido() throws Exception;
-	List<DongCodeDto> findGugunBySido(DongCodeDto sido) throws Exception;
-	List<DongCodeDto> findDongByGugun(DongCodeDto gugun) throws Exception;
+	List<DongCodeDto> findGugunBySido(String sido) throws Exception;
+	List<DongCodeDto> findDongByGugun(String gugun) throws Exception;
 }
