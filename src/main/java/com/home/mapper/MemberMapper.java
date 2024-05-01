@@ -13,7 +13,7 @@ public interface MemberMapper {
 	
 	public void save(MemberDto memberDto);
 	
-	public MemberDto findById(@Param("uuid") UUID id);
+	public MemberDto findById(long id);
 	
 	public List<MemberDto> findByEmail(String email);
 	
@@ -21,5 +21,5 @@ public interface MemberMapper {
 	
 	public void update(MemberDto memberDto);
 	
-	public void delete(@Param("uuid") UUID id);
+	public void delete(long id);
 }

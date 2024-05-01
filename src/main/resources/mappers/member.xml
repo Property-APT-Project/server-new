@@ -7,10 +7,9 @@
 	<resultMap type="memberDto" id="member">
 		<result column="phone_number" property="phoneNumber"/>
 	</resultMap>
-	
-	
-	<select id="findById" parameterType="uuid" resultMap="member">
-		SELECT * FROM members WHERE id = #{uuid}
+
+	<select id="findById" parameterType="long" resultMap="member">
+		SELECT * FROM members WHERE id = #{id}
 	</select>
 	
 	<select id="findByEmail" parameterType="string" resultMap="member">
@@ -29,10 +28,10 @@
 	<update id="update" parameterType="memberDto">
 		UPDATE members 
 		SET name = #{name}, password = #{password}, address = {address}, phone_number = #{phoneNumber}
-		WHERE id = #{uuid}
+		WHERE id = #{id}
 	</update>
 
-	<delete id="delete" parameterType="uuid">
-		DELETE FROM members where id = #{uuid}
+	<delete id="delete" parameterType="long">
+		DELETE FROM members where id = #{id}
 	</delete>	
 </mapper>
