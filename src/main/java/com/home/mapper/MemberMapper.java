@@ -1,12 +1,9 @@
 package com.home.mapper;
 
-import java.util.List;
-import java.util.UUID;
-
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
 import com.home.dto.MemberDto;
+import java.util.List;
+import java.util.Optional;
+import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface MemberMapper {
@@ -15,7 +12,7 @@ public interface MemberMapper {
 	
 	public MemberDto findById(long id);
 	
-	public List<MemberDto> findByEmail(String email);
+	public Optional<MemberDto> findByEmail(String email);
 	
 	public List<MemberDto> findAll();
 	
