@@ -28,12 +28,14 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(
-                        authorize -> authorize
-                                .requestMatchers("/members/login").permitAll()
-                                .requestMatchers("/members/health").permitAll()
-                                .anyRequest().authenticated()
-                )
+//                .authorizeHttpRequests(
+//                        authorize -> authorize
+//                                .requestMatchers("/members/login").permitAll()
+//                                .requestMatchers("/members/health").permitAll()
+//                                .requestMatchers("/members/join").permitAll()
+//                                .requestMatchers("/swagger-ui.html").permitAll()
+//                                .anyRequest().authenticated()
+//                )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtDtoProvider),
                         UsernamePasswordAuthenticationFilter.class).build();
     }
