@@ -1,5 +1,6 @@
 package com.home.util.jwt;
 
+import com.home.mapper.MemberMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -15,17 +16,17 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.EncodedKeySpec;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -35,10 +36,14 @@ public class JwtDtoProvider {
 
     private final PublicKey publicKey;
     private final PrivateKey privateKey;
+    //    private final UserDetailsService userDetailsService;
+    private final MemberMapper memberMapper;
 
-    public JwtDtoProvider() {
+    @Autowired
+    public JwtDtoProvider(MemberMapper memberMapper) {
         publicKey = getPublicKey();
         privateKey = getPrivateKey();
+        this.memberMapper = memberMapper;
     }
 
     public JwtDto generateToken(Authentication authentication) {
@@ -48,7 +53,7 @@ public class JwtDtoProvider {
 
         long now = new Date().getTime();
 
-        Date accessTokenExpiresIn = new Date(now + 1000 * 60 * 30);
+        Date accessTokenExpiresIn = new Date(now + 1000 * 60 * 60 * 7); //1000 * 60 * 30);
         String accessToken = Jwts.builder()
                 .subject(authentication.getName())
                 .claim("auth", authorities)
@@ -69,12 +74,13 @@ public class JwtDtoProvider {
     }
 
     private PublicKey getPublicKey() {
-        File publicKeyFile = new File("public.key");
+        File publicKeyFile = new File("src/main/resources/public.key");
+        PublicKey publicKey = null;
         try {
             byte[] publicKeyBytes = Files.readAllBytes(publicKeyFile.toPath());
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyBytes);
-            PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
+            publicKey = keyFactory.generatePublic(publicKeySpec);
         } catch (IOException | InvalidKeySpecException | NoSuchAlgorithmException e) {
             log.info("an error occured obtaining key");
             log.info(e.getMessage());
@@ -83,12 +89,13 @@ public class JwtDtoProvider {
     }
 
     private PrivateKey getPrivateKey() {
-        File publicKeyFile = new File("private.key");
+        File privateKeyFile = new File("src/main/resources/private.key");
+        PrivateKey privateKey = null;
         try {
-            byte[] privateKeyBytes = Files.readAllBytes(publicKeyFile.toPath());
+            byte[] privateKeyBytes = Files.readAllBytes(privateKeyFile.toPath());
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            EncodedKeySpec privateKeySpec = new X509EncodedKeySpec(privateKeyBytes);
-            PublicKey publicKey = keyFactory.generatePublic(privateKeySpec);
+            EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
+            privateKey = keyFactory.generatePrivate(privateKeySpec);
         } catch (IOException | InvalidKeySpecException | NoSuchAlgorithmException e) {
             log.info("an error occured obtaining key");
             log.info(e.getMessage());
@@ -103,12 +110,22 @@ public class JwtDtoProvider {
             throw new RuntimeException("권한 정보가 없는 토큰입니다");
         }
 
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get("auth").toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .toList();
+//        Collection<? extends GrantedAuthority> authorities =
+//                Arrays.stream(claims.get("auth").toString().split(","))
+//                        .map(SimpleGrantedAuthority::new)
+//                        .toList();
 
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
+        Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
+
+        System.out.println(claims);
+
+//        MemberDto memberDto = (MemberDto) userDetailsService.loadUserByUsername(claims.getSubject());
+        UserDetails principal = memberMapper.findByEmail(claims.getSubject());
+//                .map(this::createUserDetails)
+//                .orElseThrow(() -> new UsernameNotFoundException("해당 회원을 찾을 수 없습니다."));
+//        MemberDetails principal = new MemberDetails(memberDto);
+//        UserDetails principal = new User(claims.getSubject(), "", authorities);
+
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 

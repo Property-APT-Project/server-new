@@ -2,7 +2,6 @@ package com.home.mapper;
 
 import com.home.dto.MemberDto;
 import java.util.List;
-import java.util.Optional;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
@@ -12,7 +11,7 @@ public interface MemberMapper {
 	
 	public MemberDto findById(long id);
 	
-	public Optional<MemberDto> findByEmail(String email);
+	public MemberDto findByEmail(String email);
 	
 	public List<MemberDto> findAll();
 	

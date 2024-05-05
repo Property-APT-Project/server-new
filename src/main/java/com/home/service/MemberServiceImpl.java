@@ -6,7 +6,6 @@ import com.home.util.jwt.JwtDto;
 import com.home.util.jwt.JwtDtoProvider;
 import com.home.util.snowflake.SnowFlake;
 import java.util.List;
-import java.util.Optional;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +27,7 @@ public class MemberServiceImpl implements MemberService {
 
         validateDuplicateMember(memberDto);
         memberDto.setId(snowFlake.generateSnowFlake());
+        memberDto.getRoles().add("user");
         memberMapper.save(memberDto);
         return memberDto.getId();
     }
@@ -52,11 +52,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Optional<MemberDto> findByEmail(String email) {
+    public MemberDto findByEmail(String email) {
         return memberMapper.findByEmail(email);
     }
 
     public void update(long memberId, MemberDto memberDto) {
+        memberDto.setId(memberId);
         memberMapper.update(memberDto);
     }
 
@@ -65,8 +66,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     private void validateDuplicateMember(MemberDto memberDto) {
-        Optional<MemberDto> member = memberMapper.findByEmail(memberDto.getEmail());
-        if (member.isPresent()) {
+        MemberDto member = memberMapper.findByEmail(memberDto.getEmail());
+        if (member != null) {
             throw new IllegalArgumentException("이미 존재하는 회원입니다.");
         }
     }

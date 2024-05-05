@@ -19,9 +19,9 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return memberMapper.findByEmail(username)
-                .map(this::createUserDetails)
-                .orElseThrow(() -> new UsernameNotFoundException("해당 회원을 찾을 수 없습니다."));
+        return createUserDetails(memberMapper.findByEmail(username));
+//                .map(this::createUserDetails)
+//                .orElseThrow(() -> new UsernameNotFoundException("해당 회원을 찾을 수 없습니다."));
     }
 
     private UserDetails createUserDetails(MemberDto memberDto) {

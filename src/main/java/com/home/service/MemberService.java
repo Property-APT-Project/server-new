@@ -3,7 +3,6 @@ package com.home.service;
 import com.home.dto.MemberDto;
 import com.home.util.jwt.JwtDto;
 import java.util.List;
-import java.util.Optional;
 
 public interface MemberService {
 
@@ -16,7 +15,7 @@ public interface MemberService {
 
     public MemberDto findById(long memberId);
 
-    public Optional<MemberDto> findByEmail(String email);
+    public MemberDto findByEmail(String email);
 
     public void update(long memberId, MemberDto memberDto);
 

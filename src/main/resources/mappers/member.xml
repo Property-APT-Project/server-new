@@ -27,7 +27,7 @@
 	
 	<update id="update" parameterType="memberDto">
 		UPDATE members 
-		SET name = #{name}, password = #{password}, address = {address}, phone_number = #{phoneNumber}
+		SET name = #{name}, password = #{password}, address = #{address}, phone_number = #{phoneNumber}
 		WHERE id = #{id}
 	</update>
 

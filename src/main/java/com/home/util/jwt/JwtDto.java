@@ -12,7 +12,9 @@ import java.security.spec.EncodedKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import lombok.Builder;
+import lombok.Data;
 
+@Data
 @Builder
 public class JwtDto {
 
