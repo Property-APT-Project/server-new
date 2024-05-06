@@ -12,10 +12,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class MemberDetails implements UserDetails {
 
     MemberDto memberDto;
+    private final Collection<? extends GrantedAuthority> authorities;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return memberDto.getAuthorities();
+        return authorities;
     }
 
     @Override
@@ -25,7 +26,7 @@ public class MemberDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return memberDto.getUsername();
+        return memberDto.getEmail();
     }
 
     @Override

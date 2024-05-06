@@ -19,6 +19,10 @@ public interface MemberService {
 
     public void update(long memberId, MemberDto memberDto);
 
+    public void updateByEmail(String username, MemberDto memberDto);
+
     public void delete(long memberId);
+
+    public void deleteByEmail(String username);
 
 }

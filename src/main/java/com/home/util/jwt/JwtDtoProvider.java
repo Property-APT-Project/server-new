@@ -1,6 +1,5 @@
 package com.home.util.jwt;
 
-import com.home.mapper.MemberMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -27,7 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -36,14 +37,13 @@ public class JwtDtoProvider {
 
     private final PublicKey publicKey;
     private final PrivateKey privateKey;
-    //    private final UserDetailsService userDetailsService;
-    private final MemberMapper memberMapper;
+    private final UserDetailsService userDetailService;
 
     @Autowired
-    public JwtDtoProvider(MemberMapper memberMapper) {
+    public JwtDtoProvider(UserDetailsService userDetailsService) {
         publicKey = getPublicKey();
         privateKey = getPrivateKey();
-        this.memberMapper = memberMapper;
+        this.userDetailService = userDetailsService;
     }
 
     public JwtDto generateToken(Authentication authentication) {
@@ -119,14 +119,10 @@ public class JwtDtoProvider {
 
         System.out.println(claims);
 
-//        MemberDto memberDto = (MemberDto) userDetailsService.loadUserByUsername(claims.getSubject());
-        UserDetails principal = memberMapper.findByEmail(claims.getSubject());
-//                .map(this::createUserDetails)
-//                .orElseThrow(() -> new UsernameNotFoundException("해당 회원을 찾을 수 없습니다."));
-//        MemberDetails principal = new MemberDetails(memberDto);
-//        UserDetails principal = new User(claims.getSubject(), "", authorities);
-
-        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+        userDetailService.loadUserByUsername(claims.getSubject());
+        UserDetails principal = new User(claims.getSubject(), "", authorities);
+        return new UsernamePasswordAuthenticationToken(claims.getSubject(), "", authorities);
+//        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
     public boolean validateToken(String token) {

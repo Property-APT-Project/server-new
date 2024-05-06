@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,12 +24,14 @@ public class MemberServiceImpl implements MemberService {
     private final SnowFlake snowFlake;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtDtoProvider jwtDtoProvider;
+    private final PasswordEncoder passwordEncoder;
 
     public Long join(MemberDto memberDto) throws IllegalArgumentException {
 
         validateDuplicateMember(memberDto);
         memberDto.setId(snowFlake.generateSnowFlake());
-        memberDto.getRoles().add("user");
+        memberDto.setPassword(passwordEncoder.encode(memberDto.getPassword()));
+//        memberDto.getRoles().add("user");
         memberMapper.save(memberDto);
         return memberDto.getId();
     }
@@ -37,6 +41,7 @@ public class MemberServiceImpl implements MemberService {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 username, password);
 
+        validateDuplicateMember(username);
         Authentication authentication = authenticationManagerBuilder.getObject()
                 .authenticate(authenticationToken);
 
@@ -61,14 +66,34 @@ public class MemberServiceImpl implements MemberService {
         memberMapper.update(memberDto);
     }
 
+    public void updateByEmail(String username, MemberDto memberDto) {
+        if (!username.equals(memberDto.getEmail())) {
+            throw new IllegalArgumentException("회원 이름이 일치하지 않습니다.");
+        }
+
+        memberMapper.updateByEmail(memberDto);
+    }
+
     public void delete(long memberId) {
         memberMapper.delete(memberId);
+    }
+
+    public void deleteByEmail(String username) {
+        memberMapper.deleteByEmail(username);
     }
 
     private void validateDuplicateMember(MemberDto memberDto) {
         MemberDto member = memberMapper.findByEmail(memberDto.getEmail());
         if (member != null) {
             throw new IllegalArgumentException("이미 존재하는 회원입니다.");
+        }
+    }
+
+    private void validateDuplicateMember(String username) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(authentication.getPrincipal());
+        if (authentication.getPrincipal().equals(username)) {
+            throw new IllegalArgumentException("이미 로그인한 회원입니다.");
         }
     }
 }

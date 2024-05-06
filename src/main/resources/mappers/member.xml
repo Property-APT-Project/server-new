@@ -31,7 +31,17 @@
 		WHERE id = #{id}
 	</update>
 
+	<update id="updateByEmail" parameterType="memberDto">
+		UPDATE members
+		SET name = #{name}, password = #{password}, address = #{address}, phone_number = #{phoneNumber}
+		WHERE email = #{email}
+	</update>
+
 	<delete id="delete" parameterType="long">
 		DELETE FROM members where id = #{id}
-	</delete>	
+	</delete>
+
+	<delete id="deleteByEmail" parameterType="string">
+		DELETE FROM members where email = #{email}
+	</delete>
 </mapper>

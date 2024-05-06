@@ -16,6 +16,10 @@ public interface MemberMapper {
 	public List<MemberDto> findAll();
 	
 	public void update(MemberDto memberDto);
+
+	public void updateByEmail(MemberDto memberDto);
 	
 	public void delete(long id);
+
+	public void deleteByEmail(String email);
 }

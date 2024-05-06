@@ -1,15 +1,18 @@
 package com.home.controller;
 
 import com.home.dto.MemberDto;
+import com.home.dto.ProfileDto;
 import com.home.service.MemberService;
 import com.home.util.jwt.JwtDto;
 import jakarta.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -50,20 +53,38 @@ public class MemberController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody MemberDto memberDto) {
-    	String username = memberDto.getUsername();
+    	String username = memberDto.getEmail();
     	String password = memberDto.getPassword();
-    	JwtDto jwtDto = memberService.login(username, password);
-		return ResponseEntity.status(HttpStatus.OK).body(jwtDto);
+        try {
+            JwtDto jwtDto = memberService.login(username, password);
+            return ResponseEntity.status(HttpStatus.OK).body(jwtDto);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return new ResponseEntity<>("로그인에 실패하였습니다.", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<?> getProfile() {
+    public ResponseEntity<?> getProfile(@AuthenticationPrincipal Principal principal) {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
+
+        String username = (String) authentication.getPrincipal();
+        MemberDto memberDto = memberService.findByEmail(username);
         System.out.println("principal " + authentication.getPrincipal());
         System.out.println("credential " + authentication.getCredentials());
         System.out.println("detail " + authentication.getDetails());
-        return ResponseEntity.status(HttpStatus.OK).body(authentication.getPrincipal());
+        ProfileDto profileDto = ProfileDto.builder()
+                .email(memberDto.getEmail())
+                .name(memberDto.getName())
+                .address(memberDto.getAddress())
+                .phoneNumber(memberDto.getPhoneNumber())
+                .build();
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(profileDto);
+        } catch (Exception e) {
+            return new ResponseEntity<>("조회 실패하였습니다.", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/profile")
@@ -71,18 +92,30 @@ public class MemberController {
     {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
-        MemberDto principal = (MemberDto) authentication.getPrincipal();
-        memberService.update(principal.getId(), memberDto);
-        return ResponseEntity.status(HttpStatus.OK).body("성공적으로 업데이트 되었습니다.");
+
+        String username = (String) authentication.getPrincipal();
+        try {
+            memberService.updateByEmail(username, memberDto);
+            return ResponseEntity.status(HttpStatus.OK).body("성공적으로 업데이트 되었습니다.");
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return new ResponseEntity<>("업데이트 실패하였습니다.", HttpStatus.BAD_REQUEST);
+        }
     }
     
     @DeleteMapping("/leave")
     public ResponseEntity<?> leave() {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         Authentication authentication = securityContext.getAuthentication();
-        MemberDto principal = (MemberDto) authentication.getPrincipal();
-        memberService.delete(principal.getId());
-		return ResponseEntity.status(HttpStatus.OK).body("성공적으로 삭제 되었습니다.");
+
+        String username = (String) authentication.getPrincipal();
+        try {
+            memberService.deleteByEmail(username);
+            return ResponseEntity.status(HttpStatus.OK).body("성공적으로 삭제 되었습니다.");
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return new ResponseEntity<>("삭제 실패하였습니다.", HttpStatus.BAD_REQUEST);
+        }
     }
     
     @GetMapping("/logout")

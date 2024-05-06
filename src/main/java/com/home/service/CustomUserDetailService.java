@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 public class CustomUserDetailService implements UserDetailsService {
 
     private final MemberMapper memberMapper;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -27,8 +25,8 @@ public class CustomUserDetailService implements UserDetailsService {
     private UserDetails createUserDetails(MemberDto memberDto) {
         return User.builder()
                 .username(memberDto.getEmail())
-                .password(passwordEncoder.encode(memberDto.getPassword()))
-                .roles(memberDto.getRoles().toArray(new String[0]))
+                .password(memberDto.getPassword())
+//                .roles(memberDto.getRoles().toArray(new String[0]))
                 .build();
     }
 }
