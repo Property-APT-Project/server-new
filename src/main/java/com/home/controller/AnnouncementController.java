@@ -2,13 +2,17 @@ package com.home.controller;
 
 import com.home.dto.AnnouncementDto;
 import com.home.dto.AnnouncementViewDto;
+import com.home.dto.MemberDto;
 import com.home.service.AnnouncementService;
+import com.home.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AnnouncementController {
 
     private final AnnouncementService announcementService;
+    private final MemberService memberService;
 
     @GetMapping("/health")
     public ResponseEntity<String> status(HttpServletRequest request){
@@ -35,6 +40,12 @@ public class AnnouncementController {
     @PostMapping("/new-announcement")
     public ResponseEntity<?> write(@RequestBody AnnouncementDto announcementDto) {
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            String username = (String) authentication.getPrincipal();
+            MemberDto memberDto = memberService.findByEmail(username);
+
+            announcementDto.setMemberId(memberDto.getId());
             announcementService.write(announcementDto);
             return ResponseEntity.status(HttpStatus.OK).body("성공적으로 등록되었습니다.");
         } catch (Exception e) {
