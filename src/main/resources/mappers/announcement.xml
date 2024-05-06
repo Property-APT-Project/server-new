@@ -5,18 +5,19 @@
 <mapper namespace="com.home.mapper.AnnouncementMapper">
   <resultMap id="announcement" type="announcementDto">
     <result column="announcement_no" property="announcementNo"/>
-    <result column="user_id" property="userId"/>
+    <result column="member_id" property="memberId"/>
     <result column="register_time" property="registerTime"/>
+    <result column="name" property="memberName" />
   </resultMap>
 
   <insert id="create" parameterType="announcementDto" >
-    INSERT INTO announcement (user_id, subject, content, hit, register_time)
-    VALUES (#{userId}, #{subject}, #{content}, #{hit}, #{registerTime})
+    INSERT INTO announcement (member_id, subject, content, hit, register_time)
+    VALUES (#{memberId}, #{subject}, #{content}, #{hit}, #{registerTime})
   </insert>
-  <select id="findById" parameterType="string" resultMap="announcement">
-    SELECT *
-    FROM announcement
-    WHERE announcement_no = #{announcementNo}
+  <select id="findById" parameterType="int" resultMap="announcement">
+    SELECT ant.*, m.name
+    FROM announcement ant, members m
+    WHERE ant.member_id = m.id and announcement_no = #{announcementNo}
   </select>
   <select id="findAll" resultMap="announcement">
     SELECT *
@@ -24,7 +25,7 @@
   </select>
   <update id="update" parameterType="announcementDto">
     UPDATE announcement
-    SET user_id = #{userId}, subject = #{subject}, content = #{content}, hit = #{hit}, register_time = #{registerTime}
+    SET subject = #{subject}, content = #{content}, hit = #{hit}, register_time = #{registerTime}
     WHERE announcement_no = #{announcementNo}
   </update>
   <delete id="delete" parameterType="int">

@@ -9,11 +9,11 @@ public interface AnnouncementMapper {
 
     void create(AnnouncementDto announcementDto);
 
-    AnnouncementDto findById(int id);
+    AnnouncementDto findById(int announcementNo);
 
     List<AnnouncementDto> findAll();
 
     void update(AnnouncementDto announcementDto);
 
-    void delete(int id);
+    void delete(int announcementNo);
 }

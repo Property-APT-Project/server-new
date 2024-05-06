@@ -29,11 +29,18 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public void modify(AnnouncementDto announcementDto) {
+        int announcementNo = announcementDto.getAnnouncementNo();
+        if (findById(announcementNo) == null) {
+            throw new IllegalArgumentException("변경하고자 하는 게시물이 없습니다.");
+        }
         announcementMapper.update(announcementDto);
     }
 
     @Override
     public void delete(int announcementNo) {
+        if (findById(announcementNo) == null) {
+            throw new IllegalArgumentException("변경하고자 하는 게시물이 없습니다.");
+        }
         announcementMapper.delete(announcementNo);
     }
 }
