@@ -7,7 +7,9 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface MemberMapper {
 	
-	public void save(MemberDto memberDto);
+	public void insertMember(MemberDto memberDto);
+
+	public void insertRole(MemberDto memberDto);
 	
 	public MemberDto findById(long id);
 	

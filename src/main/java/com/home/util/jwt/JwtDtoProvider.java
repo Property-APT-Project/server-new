@@ -17,7 +17,7 @@ import java.security.spec.EncodedKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -110,12 +111,12 @@ public class JwtDtoProvider {
             throw new RuntimeException("권한 정보가 없는 토큰입니다");
         }
 
-//        Collection<? extends GrantedAuthority> authorities =
-//                Arrays.stream(claims.get("auth").toString().split(","))
-//                        .map(SimpleGrantedAuthority::new)
-//                        .toList();
+        Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream(claims.get("auth").toString().split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .toList();
 
-        Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
+//        Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
 
         System.out.println(claims);
 

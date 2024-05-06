@@ -17,7 +17,8 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return createUserDetails(memberMapper.findByEmail(username));
+        MemberDto memberDto = memberMapper.findByEmail(username);
+        return createUserDetails(memberDto);
 //                .map(this::createUserDetails)
 //                .orElseThrow(() -> new UsernameNotFoundException("해당 회원을 찾을 수 없습니다."));
     }
@@ -26,6 +27,7 @@ public class CustomUserDetailService implements UserDetailsService {
         return User.builder()
                 .username(memberDto.getEmail())
                 .password(memberDto.getPassword())
+                .authorities(memberDto.getRole().toString())
 //                .roles(memberDto.getRoles().toArray(new String[0]))
                 .build();
     }

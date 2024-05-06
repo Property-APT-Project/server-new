@@ -9,22 +9,33 @@
 	</resultMap>
 
 	<select id="findById" parameterType="long" resultMap="member">
-		SELECT * FROM members WHERE id = #{id}
+		SELECT members.*, roles. role
+		FROM members, roles
+		WHERE members. id = roles.member_id and id = #{id}
 	</select>
 	
 	<select id="findByEmail" parameterType="string" resultMap="member">
-		SELECT * FROM members WHERE email = #{email}
+		SELECT members.*, roles. role
+		FROM members, roles
+		WHERE members. id = roles.member_id and email = #{email}
 	</select>
 	
 	<select id="findAll" resultMap="member">
-		SELECT * FROM members
+		SELECT members.*, roles. role
+		FROM members, roles
+		WHERE members. id = roles.member_id
 	</select>
-	
-	<insert id="save" parameterType="memberDto">
+
+	<insert id="insertMember" parameterType="memberDto">
 		INSERT INTO members (id, email, name, password, address, phone_number)
 		VALUES (#{id}, #{email}, #{name}, #{password}, #{address}, #{phoneNumber})
 	</insert>
-	
+
+	<insert id="insertRole" parameterType="memberDto">
+		INSERT INTO roles (member_id, role)
+		VALUES (#{id}, #{role})
+	</insert>
+
 	<update id="update" parameterType="memberDto">
 		UPDATE members 
 		SET name = #{name}, password = #{password}, address = #{address}, phone_number = #{phoneNumber}

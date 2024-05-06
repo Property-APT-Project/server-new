@@ -1,6 +1,7 @@
 package com.home.service;
 
 import com.home.dto.MemberDto;
+import com.home.enums.role.UserRole;
 import com.home.mapper.MemberMapper;
 import com.home.util.jwt.JwtDto;
 import com.home.util.jwt.JwtDtoProvider;
@@ -14,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Builder
@@ -26,13 +28,16 @@ public class MemberServiceImpl implements MemberService {
     private final JwtDtoProvider jwtDtoProvider;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public Long join(MemberDto memberDto) throws IllegalArgumentException {
 
         validateDuplicateMember(memberDto);
         memberDto.setId(snowFlake.generateSnowFlake());
         memberDto.setPassword(passwordEncoder.encode(memberDto.getPassword()));
-//        memberDto.getRoles().add("user");
-        memberMapper.save(memberDto);
+        memberDto.setRole(UserRole.ROLE_USER);
+        memberMapper.insertMember(memberDto);
+        memberMapper.insertRole(memberDto);
+//        memberMapper.save(memberDto);
         return memberDto.getId();
     }
 

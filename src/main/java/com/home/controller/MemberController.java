@@ -34,8 +34,16 @@ public class MemberController {
     @Value("${spring.application.name}")
     String serviceName;
 
+
     @GetMapping("/health")
     public ResponseEntity<?> checkHealth(HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                String.format("%d port %s Connected", request.getServerPort(), serviceName)
+        );
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<?> test(HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 String.format("%d port %s Connected", request.getServerPort(), serviceName)
         );
@@ -47,6 +55,7 @@ public class MemberController {
     		Long id = memberService.join(memberDto);
     		return ResponseEntity.status(HttpStatus.OK).body("성공적으로 회원가입되었습니다.");
 		} catch (Exception e) {
+            log.info(e.getMessage());
 			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());
 		}
     }

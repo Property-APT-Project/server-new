@@ -1,10 +1,12 @@
 package com.home.config;
 
+import com.home.enums.role.UserRole;
 import com.home.util.jwt.JwtAuthenticationFilter;
 import com.home.util.jwt.JwtDtoProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -28,14 +30,18 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .authorizeHttpRequests(
-//                        authorize -> authorize
-//                                .requestMatchers("/members/login").permitAll()
+                .authorizeHttpRequests(
+                        authorize -> authorize
+                                .requestMatchers("/members/login", "/members/join").permitAll()
 //                                .requestMatchers("/members/health").permitAll()
-//                                .requestMatchers("/members/join").permitAll()
-//                                .requestMatchers("/swagger-ui.html").permitAll()
-//                                .anyRequest().authenticated()
-//                )
+                                .requestMatchers("/swagger-ui/**").permitAll()
+                                .requestMatchers("/api-docs/**").permitAll()
+                                .requestMatchers("/members/**").hasAuthority(UserRole.ROLE_USER.getValue())
+                                .requestMatchers(HttpMethod.GET, "/announcements", "/announcements/*").permitAll()
+                                .requestMatchers("/announcements/**").hasAuthority(UserRole.ROLE_ADMIN.getValue())
+                                .requestMatchers("/members/test").hasAuthority(UserRole.ROLE_USER.getValue())
+                                .anyRequest().authenticated()
+                )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtDtoProvider),
                         UsernamePasswordAuthenticationFilter.class).build();
     }
