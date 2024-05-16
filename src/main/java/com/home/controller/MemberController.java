@@ -2,8 +2,9 @@ package com.home.controller;
 
 import com.home.dto.MemberDto;
 import com.home.dto.ProfileDto;
+import com.home.security.jwt.JwtDto;
 import com.home.service.MemberService;
-import com.home.util.jwt.JwtDto;
+
 import jakarta.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;

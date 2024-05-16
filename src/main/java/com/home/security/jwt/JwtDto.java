@@ -1,4 +1,4 @@
-package com.home.util.jwt;
+package com.home.security.jwt;
 
 import io.jsonwebtoken.Jwts.SIG;
 import io.jsonwebtoken.security.SignatureAlgorithm;

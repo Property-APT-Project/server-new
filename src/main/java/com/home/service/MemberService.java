@@ -1,7 +1,8 @@
 package com.home.service;
 
 import com.home.dto.MemberDto;
-import com.home.util.jwt.JwtDto;
+import com.home.security.jwt.JwtDto;
+
 import java.util.List;
 
 public interface MemberService {
