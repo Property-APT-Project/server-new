@@ -1,8 +1,9 @@
-package com.home.config;
+package com.home.security.config;
 
 import com.home.enums.role.UserRole;
-import com.home.util.jwt.JwtAuthenticationFilter;
-import com.home.util.jwt.JwtDtoProvider;
+import com.home.security.jwt.JwtAuthenticationFilter;
+import com.home.security.jwt.JwtDtoProvider;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
