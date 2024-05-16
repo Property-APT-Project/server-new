@@ -1,4 +1,4 @@
-package com.home.service;
+package com.home.security.jwt.detail;
 
 import com.home.dto.MemberDto;
 import com.home.mapper.MemberMapper;

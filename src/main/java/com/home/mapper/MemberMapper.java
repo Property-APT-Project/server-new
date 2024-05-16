@@ -1,8 +1,11 @@
 package com.home.mapper;
 
-import com.home.dto.MemberDto;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Mapper;
+
+import com.home.dto.MemberDto;
 
 @Mapper
 public interface MemberMapper {
@@ -10,6 +13,8 @@ public interface MemberMapper {
 	public void insertMember(MemberDto memberDto);
 
 	public void insertRole(MemberDto memberDto);
+	
+	public void insertRefreshToken(Map<String, Object> params);
 	
 	public MemberDto findById(long id);
 	
@@ -24,4 +29,5 @@ public interface MemberMapper {
 	public void delete(long id);
 
 	public void deleteByEmail(String email);
+	
 }
