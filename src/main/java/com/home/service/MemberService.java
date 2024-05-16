@@ -1,9 +1,9 @@
 package com.home.service;
 
-import com.home.dto.MemberDto;
-import com.home.security.jwt.JwtDto;
-
 import java.util.List;
+
+import com.home.dto.MemberDto;
+import com.home.security.jwt.dto.JwtDto;
 
 public interface MemberService {
 
@@ -11,6 +11,8 @@ public interface MemberService {
     public Long join(MemberDto memberDto) throws IllegalArgumentException;
 
     public JwtDto login(String username, String password);
+    
+    public JwtDto refreshToken(String refreshToken);
 
     public List<MemberDto> findMembers();
 

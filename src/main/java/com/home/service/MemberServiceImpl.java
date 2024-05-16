@@ -1,14 +1,9 @@
 package com.home.service;
 
-import com.home.dto.MemberDto;
-import com.home.enums.role.UserRole;
-import com.home.mapper.MemberMapper;
-import com.home.security.jwt.JwtDto;
-import com.home.security.jwt.JwtDtoProvider;
-import com.home.util.snowflake.SnowFlake;
+import java.util.HashMap;
 import java.util.List;
-import lombok.Builder;
-import lombok.RequiredArgsConstructor;
+import java.util.Map;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -17,12 +12,28 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.home.dto.MemberDto;
+import com.home.enums.role.UserRole;
+import com.home.mapper.MemberMapper;
+import com.home.mapper.RefreshTokenMapper;
+import com.home.security.jwt.JwtDtoProvider;
+import com.home.security.jwt.dto.AccessTokenDto;
+import com.home.security.jwt.dto.JwtDto;
+import com.home.security.jwt.dto.RefreshTokenDto;
+import com.home.util.snowflake.SnowFlake;
+
+import lombok.Builder;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 @Builder
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
     private final MemberMapper memberMapper;
+    private final RefreshTokenMapper refreshTokenMapper;
     private final SnowFlake snowFlake;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtDtoProvider jwtDtoProvider;
@@ -50,7 +61,18 @@ public class MemberServiceImpl implements MemberService {
         Authentication authentication = authenticationManagerBuilder.getObject()
                 .authenticate(authenticationToken);
 
-        return jwtDtoProvider.generateToken(authentication);
+        JwtDto jwtDto = jwtDtoProvider.generateToken(authentication);
+        AccessTokenDto accessTokenDto =  jwtDtoProvider.getAccessToken(jwtDto);
+        RefreshTokenDto refreshTokenDto =  jwtDtoProvider.getRefreshToken(jwtDto);
+        
+        MemberDto meberDto = memberMapper.findByEmail(username);
+        long id = meberDto.getId();
+        
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", id);
+        params.put("token", refreshTokenDto.getRefreshToken());
+        memberMapper.insertRefreshToken(params);
+        return jwtDto;
     }
 
     public List<MemberDto> findMembers() {
@@ -101,4 +123,23 @@ public class MemberServiceImpl implements MemberService {
             throw new IllegalArgumentException("이미 로그인한 회원입니다.");
         }
     }
+
+	@Override
+	public JwtDto refreshToken(String requestRefreshToken) throws IllegalArgumentException {
+		try {
+			if (jwtDtoProvider.validateToken(requestRefreshToken)) {
+				String refreshToken = refreshTokenMapper.findByToken(requestRefreshToken);
+				if (refreshToken != null) {
+					return jwtDtoProvider.generateJwtDtoByRefreshToken(refreshToken);
+				} else {
+					throw new IllegalArgumentException("해당 Refresh 토큰 없음");
+				}
+			}
+			
+		} catch (Exception e) {
+			log.info(e.getMessage());
+			throw new IllegalArgumentException("Refresh 만료");
+		}
+		return null;
+	}
 }

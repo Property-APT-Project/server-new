@@ -1,10 +1,6 @@
 package com.home.security.config;
 
-import com.home.enums.role.UserRole;
-import com.home.security.jwt.JwtAuthenticationFilter;
-import com.home.security.jwt.JwtDtoProvider;
-
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,12 +17,22 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.home.enums.role.UserRole;
+import com.home.security.jwt.AuthEntryPointJwt;
+import com.home.security.jwt.JwtAuthenticationFilter;
+import com.home.security.jwt.JwtDtoProvider;
+
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtDtoProvider jwtDtoProvider;
+    
+    @Autowired
+	private AuthEntryPointJwt unauthorizedHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -35,11 +41,12 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
 //                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .cors(Customizer.withDefaults())
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         authorize -> authorize
-                                .requestMatchers("/members/login", "/members/join", "/members/health").permitAll()
+                                .requestMatchers("/members/login", "/members/join", "/members/health", "/members/refresh").permitAll()
 //                                .requestMatchers("/members/health").permitAll()
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/api-docs/**").permitAll()

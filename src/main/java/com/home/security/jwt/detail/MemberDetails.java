@@ -1,4 +1,4 @@
-package com.home.util.detail;
+package com.home.security.jwt.detail;
 
 import com.home.dto.MemberDto;
 import java.util.Collection;

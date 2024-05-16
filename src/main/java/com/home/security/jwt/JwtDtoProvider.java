@@ -20,6 +20,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
+import com.home.security.jwt.dto.AccessTokenDto;
+import com.home.security.jwt.dto.JwtDto;
+import com.home.security.jwt.dto.RefreshTokenDto;
+
 @Slf4j
 @Component
 public class JwtDtoProvider {
@@ -40,7 +45,6 @@ public class JwtDtoProvider {
     private final PrivateKey privateKey;
     private final UserDetailsService userDetailService;
 
-    @Autowired
     public JwtDtoProvider(UserDetailsService userDetailsService) {
         publicKey = getPublicKey();
         privateKey = getPrivateKey();
@@ -54,7 +58,7 @@ public class JwtDtoProvider {
 
         long now = new Date().getTime();
 
-        Date accessTokenExpiresIn = new Date(now + 1000 * 60 * 60 * 7); //1000 * 60 * 30);
+        Date accessTokenExpiresIn = new Date(now + 1000); //1000 * 60 * 30);
         String accessToken = Jwts.builder()
                 .subject(authentication.getName())
                 .claim("auth", authorities)
@@ -62,18 +66,33 @@ public class JwtDtoProvider {
                 .signWith(privateKey, SIG.RS256)
                 .compact();
 
+        //TODO UUID 추가
         String refreshToken = Jwts.builder()
                 .expiration(new Date(now + 1000 * 60 * 60 * 7))
                 .signWith(privateKey, SIG.RS256)
                 .compact();
-
+        
         return JwtDto.builder()
                 .grantType("Bearer")
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
     }
-
+    
+    public AccessTokenDto getAccessToken(JwtDto jwtDto) {
+    	return AccessTokenDto.builder()
+    			.grantType(jwtDto.getGrantType())
+    			.accessToken(jwtDto.getAccessToken())
+    			.build();
+    }
+    
+    public RefreshTokenDto getRefreshToken(JwtDto jwtDto) {
+    	return RefreshTokenDto.builder()
+    			.grantType(jwtDto.getGrantType())
+    			.refreshToken(jwtDto.getRefreshToken())
+    			.build();
+    }
+    
     private PublicKey getPublicKey() {
         File publicKeyFile = new File("src/main/resources/public.key");
         PublicKey publicKey = null;
@@ -125,6 +144,30 @@ public class JwtDtoProvider {
         return new UsernamePasswordAuthenticationToken(claims.getSubject(), "", authorities);
 //        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
+    
+    public JwtDto generateJwtDtoByRefreshToken(String refreshToken) {
+    	Claims claims = parseClaims(refreshToken);
+
+    	//TODO authority 설정하기
+//        Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
+
+//        System.out.println(claims);
+        
+        long now = new Date().getTime();
+
+        Date accessTokenExpiresIn = new Date(now + 1000 * 60 * 30); //1000 * 60 * 30);
+        String accessToken = Jwts.builder()
+                .subject(claims.getSubject())
+                .expiration(accessTokenExpiresIn)
+                .signWith(privateKey, SIG.RS256)
+                .compact();
+
+        return JwtDto.builder()
+                .grantType("Bearer")
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
 
     public boolean validateToken(String token) {
         try {
@@ -144,8 +187,27 @@ public class JwtDtoProvider {
         }
         return false;
     }
+    
+    public boolean validateRefreshToken(String token) {
+    	try {
+    		Jwts.parser()
+    		.verifyWith(publicKey)
+    		.build()
+    		.parse(token);
+    		return true;
+    	} catch (SecurityException | MalformedJwtException e) {
+    		log.info("Invalid JWT Token", e);
+    	} catch (ExpiredJwtException e) {
+    		log.info("Expired JWT Token", e);
+    	} catch (UnsupportedJwtException e) {
+    		log.info("Unsupported JWT Token", e);
+    	} catch (IllegalArgumentException e) {
+    		log.info("JWT claims string is empty.", e);
+    	}
+    	return false;
+    }
 
-    private Claims parseClaims(String accessToken) {
+    public Claims parseClaims(String accessToken) {
         try {
             return (Claims) Jwts.parser()
                     .verifyWith(publicKey)

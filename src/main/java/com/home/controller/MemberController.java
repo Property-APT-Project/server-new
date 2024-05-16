@@ -2,7 +2,9 @@ package com.home.controller;
 
 import com.home.dto.MemberDto;
 import com.home.dto.ProfileDto;
-import com.home.security.jwt.JwtDto;
+import com.home.security.jwt.JwtDtoProvider;
+import com.home.security.jwt.dto.AccessTokenDto;
+import com.home.security.jwt.dto.JwtDto;
 import com.home.service.MemberService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -72,6 +74,18 @@ public class MemberController {
             log.info(e.getMessage());
             return new ResponseEntity<>("로그인에 실패하였습니다.", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshAccessToken(HttpServletRequest request) {
+    	String token = request.getHeader("refreshToken");
+    	try {
+    		JwtDto jwtDto = memberService.refreshToken(token);
+    		return ResponseEntity.status(HttpStatus.OK).body(jwtDto);
+    	} catch (Exception e) {
+    		log.info(e.getMessage());
+    		return new ResponseEntity<>("토큰이 만료되었습니다.", HttpStatus.UNAUTHORIZED);
+    	}
     }
 
     @GetMapping("/profile")

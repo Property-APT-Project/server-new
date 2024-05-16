@@ -9,21 +9,21 @@
 	</resultMap>
 
 	<select id="findById" parameterType="long" resultMap="member">
-		SELECT members.*, roles. role
+		SELECT members.*, roles.name
 		FROM members, roles
-		WHERE members. id = roles.member_id and id = #{id}
+		WHERE members. id = roles.user_id and id = #{id}
 	</select>
 	
 	<select id="findByEmail" parameterType="string" resultMap="member">
-		SELECT members.*, roles. role
+		SELECT members.*, roles. name role
 		FROM members, roles
-		WHERE members. id = roles.member_id and email = #{email}
+		WHERE members. id = roles.user_id and email = #{email}
 	</select>
 	
 	<select id="findAll" resultMap="member">
-		SELECT members.*, roles. role
+		SELECT members.*, roles. name
 		FROM members, roles
-		WHERE members. id = roles.member_id
+		WHERE members. id = roles.user_id
 	</select>
 
 	<insert id="insertMember" parameterType="memberDto">
@@ -32,8 +32,13 @@
 	</insert>
 
 	<insert id="insertRole" parameterType="memberDto">
-		INSERT INTO roles (member_id, role)
+		INSERT INTO roles (user_id, name)
 		VALUES (#{id}, #{role})
+	</insert>
+	
+	<insert id="insertRefreshToken" parameterType="map">
+		INSERT INTO refresh_tokens (user_id, token)
+		VALUES (#{id}, #{token})
 	</insert>
 
 	<update id="update" parameterType="memberDto">
@@ -55,4 +60,5 @@
 	<delete id="deleteByEmail" parameterType="string">
 		DELETE FROM members where email = #{email}
 	</delete>
+	
 </mapper>
