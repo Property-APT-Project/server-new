@@ -14,7 +14,7 @@ public interface MemberService {
 
     public JwtDto login(String username, String password);
 
-    public void logout();
+    public void logout(String token);
 
     public JwtDto refreshToken(String refreshToken);
 

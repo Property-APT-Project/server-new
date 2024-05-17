@@ -1,5 +1,6 @@
 package com.home.security.config;
 
+import com.home.security.redis.service.JwtBlacklistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
     private final JwtDtoProvider jwtDtoProvider;
+    private final JwtBlacklistService jwtBlacklistService;
     
     @Autowired
 	private AuthEntryPointJwt unauthorizedHandler;
@@ -58,7 +60,7 @@ public class SecurityConfig {
                                 .anyRequest().permitAll()
 //                                .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtDtoProvider),
+                .addFilterBefore(new JwtAuthenticationFilter(jwtDtoProvider, jwtBlacklistService),
                         UsernamePasswordAuthenticationFilter.class).build();
     }
 
