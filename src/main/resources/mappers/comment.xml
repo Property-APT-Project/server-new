@@ -28,13 +28,19 @@
   </select>
 
   <insert id="create" parameterType="commentDto">
-    INSERT INTO comments (id, user_id, post_id, content, like, create_time)
-    VALUES (#{id}, #{userId}, #{postId}, #{content}, #{like}, #{createTime})
+    INSERT INTO comments (user_id, post_id, content, `like`, create_time)
+    VALUES (#{userId}, #{postId}, #{content}, #{like}, #{createTime})
   </insert>
 
   <update id="update" parameterType="commentDto">
     UPDATE comments
-    SET content=#{content}, like=#{like}, create_time=#{createTime})
+    SET content=#{content}
+    WHERE id = #{id}
+  </update>
+
+  <update id="updateLike" parameterType="commentDto">
+    UPDATE comments
+    SET `like`=#{like}
     WHERE id = #{id}
   </update>
 
