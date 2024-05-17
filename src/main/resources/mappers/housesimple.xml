@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.home.mapper.HouseSimpleMapper">
+
+	<select id="findAptListByLngLatRange" parameterType="map" resultType="HouseSimpleDto">
+		select complexName as aptName, cortarNo as dongCode, address,  latitude as lat, longitude as lng, images1 as thumbImg  
+		from complex_detail_info
+		where latitude between {sLat} and {eLat}
+		and longitude between {sLng} and {eLng}
+	</select>
+	
+</mapper>

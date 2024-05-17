@@ -11,21 +11,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.home.dto.HouseInfoDto;
 import com.home.service.HouseInfoService;
+import com.home.service.HouseSimpleService;
 
 
 @RestController
 @RequestMapping("/api/v1/house-info")
 public class HouseInfoRestController {
-	private final HouseInfoService service;
+	private final HouseInfoService infoService;
+	private final HouseSimpleService simpleService;
 
-	public HouseInfoRestController(HouseInfoService service) {
-		this.service = service;
+	public HouseInfoRestController(HouseInfoService infoService, HouseSimpleService simpleService) {
+		this.infoService = infoService;
+		this.simpleService = simpleService;
 	}
 	
 	@GetMapping("/dong-code/{code}")
 	public ResponseEntity<?> getHouseInfoByDongCode(@PathVariable("code") String code){
 		try {
-			List<HouseInfoDto> houseInfoList = service.findAllbyDongCode(code);
+			List<HouseInfoDto> houseInfoList = infoService.findAllbyDongCode(code);
 			return ResponseEntity.status(HttpStatus.OK).body(houseInfoList);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -36,12 +39,25 @@ public class HouseInfoRestController {
 	@GetMapping("/keyword/{name}")
 	public ResponseEntity<?> getHouseInfoListByKeyword(@PathVariable("name") String name){
 		try {
-			List<HouseInfoDto> houseInfoList = service.findAllbyKeyword(name);
+			List<HouseInfoDto> houseInfoList = infoService.findAllbyKeyword(name);
 			return ResponseEntity.status(HttpStatus.OK).body(houseInfoList);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e);
 		}
 	}
+	
+	
+	@GetMapping("/location-arrange")
+	public ResponseEntity<?> getHouseInfoByRange(@Params()){
+		try {
+			List<HouseInfoDto> houseInfoList = simpleService
+			return ResponseEntity.status(HttpStatus.OK).body(houseInfoList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e);
+		}
+	}
+	
 	
 }
