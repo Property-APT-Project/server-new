@@ -18,13 +18,21 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public CommentDto findById(long id) {
-        return commentMapper.findById(id);
+    public CommentDto findById(long id) throws IllegalArgumentException{
+        CommentDto commentDto = commentMapper.findById(id);
+        if (commentDto == null) {
+            throw new IllegalArgumentException("해당 댓글이 없습니다.");
+        }
+        return commentDto;
     }
 
     @Override
-    public List<CommentDto> findByPostId(long postId) {
-        return commentMapper.findByPostId(postId);
+    public List<CommentDto> findByPostId(long postId) throws IllegalArgumentException {
+        List<CommentDto> comments = commentMapper.findByPostId(postId);
+        if (comments.isEmpty()) {
+            throw new IllegalArgumentException("해당 게시글에 대한 댓글이 없습니다.");
+        }
+        return comments;
     }
 
     @Override
@@ -44,8 +52,13 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public void like(long id) {
+    public void like(long id) throws IllegalArgumentException {
         CommentDto commentDto = commentMapper.findById(id);
+        if (commentDto == null) {
+            throw new IllegalArgumentException("해당 댓글이 없습니다.");
+        }
+        commentDto.setId(id);
         commentDto.setLike(commentDto.getLike() + 1);
+        commentMapper.updateLike(commentDto);
     }
 }
