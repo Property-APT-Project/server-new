@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.home.mapper.PostMapper">
+  <resultMap type="postDto" id="post">
+    <result column="user_id" property="userId"/>
+    <result column="img_url" property="imgURL"/>
+    <result column="create_time" property="createTime"/>
+    <collection property="comments" ofType="com.home.dto.CommentDto"
+      select="com.home.mapper.CommentMapper.findByPostId" column="id"/>
+  </resultMap>
+
+  <select id="findById" parameterType="long" resultMap="post">
+    SELECT *
+    FROM posts
+    WHERE id = #{id}
+  </select>
+
+  <select id="findByUserId" parameterType="long" resultMap="post">
+    SELECT *
+    FROM posts
+    WHERE user_id = #{userId}
+  </select>
+
+  <select id="findAll" resultMap="post">
+    SELECT *
+    FROM posts
+  </select>
+
+  <insert id="create" parameterType="postDto">
+    INSERT INTO posts (id, user_id, title, content, img_url, like, hit, create_time)
+    VALUES (#{id}, #{userId}, #{title}, #{content}, #{imgURL}, #{like}, #{hit}, #{createTime})
+  </insert>
+
+  <update id="update" parameterType="postDto">
+    UPDATE posts
+    SET title=#{title}, content=#{content}, img_url=#{imgURL}, like=#{like}, hit=#{hit},
+    create_time=#{createTime})
+    WHERE id = #{id}
+  </update>
+
+  <delete id="delete" parameterType="long">
+    DELETE FROM posts where id = #{id}
+  </delete>
+
+</mapper>

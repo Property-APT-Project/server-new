@@ -6,6 +6,7 @@
 <mapper namespace="com.home.mapper.MemberMapper">
 	<resultMap type="memberDto" id="member">
 		<result column="phone_number" property="phoneNumber"/>
+		<result column="img_url" property="imgURL"/>
 	</resultMap>
 
 	<select id="findById" parameterType="long" resultMap="member">
