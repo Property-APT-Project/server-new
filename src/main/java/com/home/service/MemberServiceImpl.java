@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +51,10 @@ public class MemberServiceImpl implements MemberService {
     public Long join(MemberDto memberDto) throws IllegalArgumentException {
 
         validateDuplicateMember(memberDto);
+        validateEmail(memberDto.getEmail());
+        validatePassword(memberDto.getPassword());
+        validateAddress(memberDto.getAddress());
+        validatePhoneNumber(memberDto.getPhoneNumber());
         memberDto.setId(snowFlake.generateSnowFlake());
         memberDto.setPassword(passwordEncoder.encode(memberDto.getPassword()));
         memberDto.setRole(UserRole.ROLE_USER);
@@ -57,6 +62,37 @@ public class MemberServiceImpl implements MemberService {
         memberMapper.insertRole(memberDto);
 //        memberMapper.save(memberDto);
         return memberDto.getId();
+    }
+
+    private void validateEmail(String email) {
+        if (patternMatches(email,
+                "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$")) {
+            throw new IllegalArgumentException("이메일이 유효하지 않습니다.");
+        }
+
+    }
+
+    private void validatePassword(String password) {
+        if (patternMatches(password,
+                "^(?=.*[A-Za-z])(?=.*\\d)(?=(.*[!@#$%^&*(),.?\":{}|<>]){2,}).{8,}$")) {
+            throw new IllegalArgumentException("비밀번호가 유효하지 않습니다.");
+        }
+    }
+
+    private void validateAddress(String password) {
+        // "우편번호5자리, 주소, 상세 주소"
+        if (patternMatches(password,
+                "^\\d{5}, [\\w\\s.,-]+, [\\w\\s.,-]+$\n")) {
+            throw new IllegalArgumentException("주소가 유효하지 않습니다.");
+        }
+    }
+
+    private void validatePhoneNumber(String phoneNumber) {
+        // "우편번호5자리, 주소, 상세 주소"
+        if (patternMatches(phoneNumber,
+                "^010-[0-9]{4}-[0-9]{4}$")) {
+            throw new IllegalArgumentException("휴대폰 번호가 유효하지 않습니다.");
+        }
     }
 
     @Override
@@ -72,8 +108,8 @@ public class MemberServiceImpl implements MemberService {
         AccessTokenDto accessTokenDto =  jwtDtoProvider.getAccessToken(jwtDto);
         RefreshTokenDto refreshTokenDto =  jwtDtoProvider.getRefreshToken(jwtDto);
         
-        MemberDto meberDto = memberMapper.findByEmail(username);
-        long id = meberDto.getId();
+        MemberDto memberDto = memberMapper.findByEmail(username);
+        long id = memberDto.getId();
         
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
@@ -182,4 +218,10 @@ public class MemberServiceImpl implements MemberService {
 		}
 		return null;
 	}
+
+    private static boolean patternMatches(String emailAddress, String regexPattern) {
+        return !Pattern.compile(regexPattern)
+                .matcher(emailAddress)
+                .matches();
+    }
 }
