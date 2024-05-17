@@ -8,11 +8,13 @@ import com.home.security.jwt.JwtDtoProvider;
 import com.home.security.jwt.dto.AccessTokenDto;
 import com.home.security.jwt.dto.JwtDto;
 import com.home.security.jwt.dto.RefreshTokenDto;
+import com.home.security.redis.service.JwtBlacklistService;
 import com.home.util.snowflake.SnowFlake;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,14 +40,20 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
+    private static final String UPLOAD_DIR = "uploads/";
     private final MemberMapper memberMapper;
     private final RefreshTokenMapper refreshTokenMapper;
     private final SnowFlake snowFlake;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtDtoProvider jwtDtoProvider;
     private final PasswordEncoder passwordEncoder;
+    private final JwtBlacklistService jwtBlacklistService;
 
-    private static final String UPLOAD_DIR = "uploads/";
+    private static boolean patternMatches(String emailAddress, String regexPattern) {
+        return !Pattern.compile(regexPattern)
+                .matcher(emailAddress)
+                .matches();
+    }
 
     @Transactional
     public Long join(MemberDto memberDto) throws IllegalArgumentException {
@@ -105,12 +113,12 @@ public class MemberServiceImpl implements MemberService {
                 .authenticate(authenticationToken);
 
         JwtDto jwtDto = jwtDtoProvider.generateToken(authentication);
-        AccessTokenDto accessTokenDto =  jwtDtoProvider.getAccessToken(jwtDto);
-        RefreshTokenDto refreshTokenDto =  jwtDtoProvider.getRefreshToken(jwtDto);
-        
+        AccessTokenDto accessTokenDto = jwtDtoProvider.getAccessToken(jwtDto);
+        RefreshTokenDto refreshTokenDto = jwtDtoProvider.getRefreshToken(jwtDto);
+
         MemberDto memberDto = memberMapper.findByEmail(username);
         long id = memberDto.getId();
-        
+
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
         params.put("token", refreshTokenDto.getRefreshToken());
@@ -121,9 +129,21 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void logout() {
-        //TODO
+    public void logout(String token) {
+
+        if (token != null && jwtDtoProvider.validateToken(token)) {
+            long expirationTime =
+                    jwtDtoProvider.getExpiration(token).getTime() - new Date().getTime();
+            jwtBlacklistService.blacklistToken(token, expirationTime);
+            String name = jwtDtoProvider.getName(token);
+            MemberDto memberDto = memberMapper.findByEmail(name);
+            memberMapper.deleteRefreshToken(memberDto.getId());
+        } else {
+            throw new IllegalArgumentException("로그아웃 할 수 없습니다.");
+        }
+
     }
+
 
     public List<MemberDto> findMembers() {
         return memberMapper.findAll();
@@ -200,28 +220,22 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
-	@Override
-	public JwtDto refreshToken(String requestRefreshToken) throws IllegalArgumentException {
-		try {
-			if (jwtDtoProvider.validateToken(requestRefreshToken)) {
-				String refreshToken = refreshTokenMapper.findByToken(requestRefreshToken);
-				if (refreshToken != null) {
-					return jwtDtoProvider.generateJwtDtoByRefreshToken(refreshToken);
-				} else {
-					throw new IllegalArgumentException("해당 Refresh 토큰 없음");
-				}
-			}
-			
-		} catch (Exception e) {
-			log.info(e.getMessage());
-			throw new IllegalArgumentException("Refresh 만료");
-		}
-		return null;
-	}
+    @Override
+    public JwtDto refreshToken(String requestRefreshToken) throws IllegalArgumentException {
+        try {
+            if (jwtDtoProvider.validateToken(requestRefreshToken)) {
+                String refreshToken = refreshTokenMapper.findByToken(requestRefreshToken);
+                if (refreshToken != null) {
+                    return jwtDtoProvider.generateJwtDtoByRefreshToken(refreshToken);
+                } else {
+                    throw new IllegalArgumentException("해당 Refresh 토큰 없음");
+                }
+            }
 
-    private static boolean patternMatches(String emailAddress, String regexPattern) {
-        return !Pattern.compile(regexPattern)
-                .matcher(emailAddress)
-                .matches();
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            throw new IllegalArgumentException("Refresh 만료");
+        }
+        return null;
     }
 }

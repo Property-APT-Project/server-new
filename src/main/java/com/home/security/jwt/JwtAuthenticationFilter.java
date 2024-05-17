@@ -1,5 +1,6 @@
 package com.home.security.jwt;
 
+import com.home.security.redis.service.JwtBlacklistService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -16,14 +17,14 @@ import org.springframework.web.filter.GenericFilterBean;
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private final JwtDtoProvider jwtDtoProvider;
+    private final JwtBlacklistService jwtBlacklistService;
 
     @Override
-
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
         String token = resolveToken((HttpServletRequest) request);
 
-        if (token != null && jwtDtoProvider.validateToken(token)) {
+        if (token != null && jwtDtoProvider.validateToken(token) && !jwtBlacklistService.isTokenBlacklisted(token)) {
             Authentication authentication = jwtDtoProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

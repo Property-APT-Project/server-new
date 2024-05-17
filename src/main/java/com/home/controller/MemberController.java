@@ -19,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -176,11 +177,31 @@ public class MemberController {
         }
     }
 
-    @GetMapping("/logout")
-    public ResponseEntity<?> logout() {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        MemberDto principal = (MemberDto) authentication.getPrincipal();
-        return ResponseEntity.status(HttpStatus.OK).body("성공적으로 로그아웃 되었습니다.");
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        try {
+            String token = resolveToken(request);
+            memberService.logout(token);
+            return ResponseEntity.status(HttpStatus.OK).body("성공적으로 로그아웃 되었습니다.");
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그아웃 실패하였습니다.");
+        }
     }
+
+    private String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+//    @GetMapping("/logout")
+//    public ResponseEntity<?> logout() {
+//        SecurityContext securityContext = SecurityContextHolder.getContext();
+//        Authentication authentication = securityContext.getAuthentication();
+//        MemberDto principal = (MemberDto) authentication.getPrincipal();
+//        return ResponseEntity.status(HttpStatus.OK).body("성공적으로 로그아웃 되었습니다.");
+//    }
+
 }

@@ -218,4 +218,14 @@ public class JwtDtoProvider {
             return e.getClaims();
         }
     }
+
+    public Date getExpiration(String token) {
+        Claims claims = parseClaims(token);
+        return claims.getExpiration();
+    }
+
+    public String getName(String token) {
+        Claims claims = parseClaims(token);
+        return claims.getSubject();
+    }
 }
