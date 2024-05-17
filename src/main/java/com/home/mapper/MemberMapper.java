@@ -15,6 +15,8 @@ public interface MemberMapper {
 	public void insertRole(MemberDto memberDto);
 	
 	public void insertRefreshToken(Map<String, Object> params);
+
+	public void deleteRefreshToken(long userId);
 	
 	public MemberDto findById(long id);
 	
