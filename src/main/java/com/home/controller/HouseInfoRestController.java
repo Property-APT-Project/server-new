@@ -7,9 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.home.dto.HouseInfoDto;
+import com.home.dto.HouseSimpleDto;
 import com.home.service.HouseInfoService;
 import com.home.service.HouseSimpleService;
 
@@ -49,9 +51,11 @@ public class HouseInfoRestController {
 	
 	
 	@GetMapping("/location-arrange")
-	public ResponseEntity<?> getHouseInfoByRange(@Params()){
+	public ResponseEntity<?> getHouseInfoByRange(@RequestParam(value="sLat") String sLat,
+			@RequestParam(value="eLat") String eLat, @RequestParam(value="sLng") String sLng,
+			@RequestParam(value="eLng")String eLng){
 		try {
-			List<HouseInfoDto> houseInfoList = simpleService
+			List<HouseSimpleDto> houseInfoList = simpleService.findAptListByLngLatRange(sLat, eLat, sLng, eLng);
 			return ResponseEntity.status(HttpStatus.OK).body(houseInfoList);
 		} catch (Exception e) {
 			e.printStackTrace();

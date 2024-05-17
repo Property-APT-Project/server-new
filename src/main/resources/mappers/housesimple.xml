@@ -7,8 +7,8 @@
 	<select id="findAptListByLngLatRange" parameterType="map" resultType="HouseSimpleDto">
 		select complexName as aptName, cortarNo as dongCode, address,  latitude as lat, longitude as lng, images1 as thumbImg  
 		from complex_detail_info
-		where latitude between {sLat} and {eLat}
-		and longitude between {sLng} and {eLng}
+		where latitude between #{sLat} and #{eLat}
+		and longitude between #{sLng} and #{eLng}
 	</select>
 	
 </mapper>
