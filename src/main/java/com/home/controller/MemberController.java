@@ -5,6 +5,7 @@ import com.home.dto.ProfileDto;
 import com.home.security.jwt.dto.JwtDto;
 import com.home.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
@@ -87,7 +88,7 @@ public class MemberController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<?> join(@RequestBody MemberDto memberDto) {
+    public ResponseEntity<?> join(@RequestBody @Valid MemberDto memberDto) {
         try {
             Long id = memberService.join(memberDto);
             return ResponseEntity.status(HttpStatus.OK).body("성공적으로 회원가입되었습니다.");
