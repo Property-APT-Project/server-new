@@ -13,7 +13,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/ssafyhome?serverTimezone=UTC&useUniCode=yes&characterEncoding=UTF-8
     username: ssafy
-    password: ssafy
+    password: ssafyssafy
 
 spring-doc:
   swagger-ui:

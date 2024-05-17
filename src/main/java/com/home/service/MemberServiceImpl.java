@@ -1,17 +1,5 @@
 package com.home.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.home.dto.MemberDto;
 import com.home.enums.role.UserRole;
 import com.home.mapper.MemberMapper;
@@ -21,10 +9,27 @@ import com.home.security.jwt.dto.AccessTokenDto;
 import com.home.security.jwt.dto.JwtDto;
 import com.home.security.jwt.dto.RefreshTokenDto;
 import com.home.util.snowflake.SnowFlake;
-
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -38,6 +43,8 @@ public class MemberServiceImpl implements MemberService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtDtoProvider jwtDtoProvider;
     private final PasswordEncoder passwordEncoder;
+
+    private static final String UPLOAD_DIR = "uploads/";
 
     @Transactional
     public Long join(MemberDto memberDto) throws IllegalArgumentException {
@@ -71,8 +78,15 @@ public class MemberServiceImpl implements MemberService {
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
         params.put("token", refreshTokenDto.getRefreshToken());
+
+        memberMapper.deleteRefreshToken(id);
         memberMapper.insertRefreshToken(params);
         return jwtDto;
+    }
+
+    @Override
+    public void logout() {
+        //TODO
     }
 
     public List<MemberDto> findMembers() {
@@ -107,6 +121,32 @@ public class MemberServiceImpl implements MemberService {
 
     public void deleteByEmail(String username) {
         memberMapper.deleteByEmail(username);
+    }
+
+    @Override
+    public String uploadImg(MultipartFile file) throws IOException {
+        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        Path path = Paths.get(UPLOAD_DIR + fileName);
+        Files.createDirectories(path.getParent());
+        Files.write(path, file.getBytes());
+
+        return fileName;
+    }
+
+    @Override
+    public Resource serveFile(String filename) throws RuntimeException {
+        try {
+            Path file = Paths.get(UPLOAD_DIR).resolve(filename);
+            Resource resource = new UrlResource(file.toUri());
+
+            if (resource.exists() || resource.isReadable()) {
+                return resource;
+            } else {
+                throw new RuntimeException("Could not read the file!");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Could not serve the file!", e);
+        }
     }
 
     private void validateDuplicateMember(MemberDto memberDto) {

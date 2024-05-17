@@ -1,5 +1,8 @@
 package com.home.security.jwt;
 
+import com.home.security.jwt.dto.AccessTokenDto;
+import com.home.security.jwt.dto.JwtDto;
+import com.home.security.jwt.dto.RefreshTokenDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -13,6 +16,7 @@ import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.spec.EncodedKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -20,10 +24,8 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,10 +34,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
-
-import com.home.security.jwt.dto.AccessTokenDto;
-import com.home.security.jwt.dto.JwtDto;
-import com.home.security.jwt.dto.RefreshTokenDto;
 
 @Slf4j
 @Component
@@ -58,7 +56,7 @@ public class JwtDtoProvider {
 
         long now = new Date().getTime();
 
-        Date accessTokenExpiresIn = new Date(now + 1000); //1000 * 60 * 30);
+        Date accessTokenExpiresIn = new Date(now + 1000 * 60 * 30); //1000 * 60 * 30);
         String accessToken = Jwts.builder()
                 .subject(authentication.getName())
                 .claim("auth", authorities)
@@ -66,8 +64,9 @@ public class JwtDtoProvider {
                 .signWith(privateKey, SIG.RS256)
                 .compact();
 
-        //TODO UUID 추가
         String refreshToken = Jwts.builder()
+                .random(new SecureRandom())
+                .subject(authentication.getName())
                 .expiration(new Date(now + 1000 * 60 * 60 * 7))
                 .signWith(privateKey, SIG.RS256)
                 .compact();
@@ -148,16 +147,17 @@ public class JwtDtoProvider {
     public JwtDto generateJwtDtoByRefreshToken(String refreshToken) {
     	Claims claims = parseClaims(refreshToken);
 
-    	//TODO authority 설정하기
-//        Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
-
-//        System.out.println(claims);
+        String username = claims.getSubject();
+        System.out.println();
+        UserDetails userDetails = userDetailService.loadUserByUsername(username);
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
         
         long now = new Date().getTime();
 
         Date accessTokenExpiresIn = new Date(now + 1000 * 60 * 30); //1000 * 60 * 30);
         String accessToken = Jwts.builder()
                 .subject(claims.getSubject())
+                .claim("auth", authorities)
                 .expiration(accessTokenExpiresIn)
                 .signWith(privateKey, SIG.RS256)
                 .compact();

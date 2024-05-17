@@ -1,9 +1,11 @@
 package com.home.service;
 
-import java.util.List;
-
 import com.home.dto.MemberDto;
 import com.home.security.jwt.dto.JwtDto;
+import java.io.IOException;
+import java.util.List;
+import org.springframework.core.io.Resource;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface MemberService {
 
@@ -11,7 +13,9 @@ public interface MemberService {
     public Long join(MemberDto memberDto) throws IllegalArgumentException;
 
     public JwtDto login(String username, String password);
-    
+
+    public void logout();
+
     public JwtDto refreshToken(String refreshToken);
 
     public List<MemberDto> findMembers();
@@ -28,4 +32,7 @@ public interface MemberService {
 
     public void deleteByEmail(String username);
 
+    public String uploadImg(MultipartFile file) throws IOException;
+
+    public Resource serveFile(String filename);
 }
