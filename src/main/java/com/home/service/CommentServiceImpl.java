@@ -59,6 +59,6 @@ public class CommentServiceImpl implements CommentService{
         }
         commentDto.setId(id);
         commentDto.setLike(commentDto.getLike() + 1);
-        commentMapper.updateLike(commentDto);
+        commentMapper.update(commentDto);
     }
 }

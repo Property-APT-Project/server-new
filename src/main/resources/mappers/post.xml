@@ -5,6 +5,7 @@
 
 <mapper namespace="com.home.mapper.PostMapper">
   <resultMap type="postDto" id="post">
+    <result column="id" property="id"/>
     <result column="user_id" property="userId"/>
     <result column="img_url" property="imgURL"/>
     <result column="create_time" property="createTime"/>
@@ -30,14 +31,19 @@
   </select>
 
   <insert id="create" parameterType="postDto">
-    INSERT INTO posts (id, user_id, title, content, img_url, like, hit, create_time)
-    VALUES (#{id}, #{userId}, #{title}, #{content}, #{imgURL}, #{like}, #{hit}, #{createTime})
+    INSERT INTO posts (user_id, title, content, img_url, `like`, hit, create_time)
+    VALUES (#{userId}, #{title}, #{content}, #{imgURL}, #{like}, #{hit}, #{createTime})
   </insert>
 
   <update id="update" parameterType="postDto">
     UPDATE posts
-    SET title=#{title}, content=#{content}, img_url=#{imgURL}, like=#{like}, hit=#{hit},
-    create_time=#{createTime})
+    <set>
+      <if test="title != null">title = #{title},</if>
+      <if test="content != null">content = #{content},</if>
+      <if test="imgURL != null">img_url = #{imgURL},</if>
+      <if test="like != null">`like` = #{like},</if>
+      <if test="hit != null">hit = #{hit},</if>
+    </set>
     WHERE id = #{id}
   </update>
 

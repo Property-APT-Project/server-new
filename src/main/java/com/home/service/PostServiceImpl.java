@@ -4,7 +4,9 @@ import com.home.dto.PostDto;
 import com.home.mapper.PostMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+@Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
@@ -50,6 +52,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public void like(long id) {
         PostDto postDto = postMapper.findById(id);
+        System.out.println(postDto);
         postDto.setLike(postDto.getLike()+1);
         postMapper.update(postDto);
     }

@@ -34,13 +34,10 @@
 
   <update id="update" parameterType="commentDto">
     UPDATE comments
-    SET content=#{content}
-    WHERE id = #{id}
-  </update>
-
-  <update id="updateLike" parameterType="commentDto">
-    UPDATE comments
-    SET `like`=#{like}
+    <set>
+      <if test="content != null">content = #{content},</if>
+      <if test="like != null">`like` = #{like},</if>
+    </set>
     WHERE id = #{id}
   </update>
 
