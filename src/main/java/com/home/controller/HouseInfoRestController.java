@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.home.dto.DongCodeDto;
 import com.home.dto.HouseDetailDto;
 import com.home.dto.HouseInfoDto;
 import com.home.dto.HouseSimpleDto;
@@ -60,6 +61,19 @@ public class HouseInfoRestController {
 			@RequestParam(value="eLng")String eLng){
 		try {
 			List<HouseSimpleDto> houseInfoList = simpleService.findAptListByLngLatRange(sLat, eLat, sLng, eLng);
+			return ResponseEntity.status(HttpStatus.OK).body(houseInfoList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e);
+		}
+	}
+	
+	@GetMapping("/dong-group")
+	public ResponseEntity<?> getHouseInfoGroupByRange(@RequestParam(value="sLat") String sLat,
+			@RequestParam(value="eLat") String eLat, @RequestParam(value="sLng") String sLng,
+			@RequestParam(value="eLng")String eLng){
+		try {
+			List<DongCodeDto> houseInfoList = simpleService.findAptListGroupByDongByLngLatRange(sLat, eLat, sLng, eLng);
 			return ResponseEntity.status(HttpStatus.OK).body(houseInfoList);
 		} catch (Exception e) {
 			e.printStackTrace();
