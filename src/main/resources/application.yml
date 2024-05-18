@@ -30,6 +30,7 @@ spring-doc:
 mybatis:
   mapper-locations: mappers/*.xml
   type-aliases-package: com.home.dto;
-
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   
   

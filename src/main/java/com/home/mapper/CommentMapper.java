@@ -17,7 +17,5 @@ public interface CommentMapper {
 
     void update(CommentDto commentDto);
 
-    void updateLike(CommentDto commentDto);
-
     void delete(long id);
 }

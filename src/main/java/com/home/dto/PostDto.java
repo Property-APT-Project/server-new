@@ -4,9 +4,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class PostDto {
 
     private long id;
@@ -14,8 +16,8 @@ public class PostDto {
     private String title;
     private String content;
     private String imgURL;
-    private int like;
-    private int hit;
+    private Integer like;
+    private Integer hit;
     private LocalDateTime createTime;
     private List<CommentDto> comments;
 }
