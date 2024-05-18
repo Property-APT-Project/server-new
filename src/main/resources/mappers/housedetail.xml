@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.home.mapper.HouseDetailMapper">
+
+	<select id="findDetailInfoByApt" parameterType="map" resultType="HouseDetailDto">
+		select complexName as aptName, cortarNo as dongCode, address, detailAddress as dongAddress, roadAddress,
+		totalHouseholdCount as houseHoldCount, highFloor, lowFloor, useApproveYmd, totalDongCount, 
+		parkingPossibleCount,parkingCountByHousehold,heatMethodTypeCode, heatFuelTypeCode, pyoengNames, 
+		latitude as lat, longitude as lng, images1, images2, images3, images4, images5
+		from complex_detail_info
+		where complexName = #{aptName} and cortarNo=#{dongCode}
+	</select>
+	
+</mapper>

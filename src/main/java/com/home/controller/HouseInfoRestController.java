@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.home.dto.HouseDetailDto;
 import com.home.dto.HouseInfoDto;
 import com.home.dto.HouseSimpleDto;
+import com.home.service.HouseDetailService;
 import com.home.service.HouseInfoService;
 import com.home.service.HouseSimpleService;
 
@@ -21,10 +23,12 @@ import com.home.service.HouseSimpleService;
 public class HouseInfoRestController {
 	private final HouseInfoService infoService;
 	private final HouseSimpleService simpleService;
+	private final HouseDetailService detailService;
 
-	public HouseInfoRestController(HouseInfoService infoService, HouseSimpleService simpleService) {
+	public HouseInfoRestController(HouseInfoService infoService, HouseSimpleService simpleService, HouseDetailService detailService) {
 		this.infoService = infoService;
 		this.simpleService = simpleService;
+		this.detailService = detailService;
 	}
 	
 	@GetMapping("/dong-code/{code}")
@@ -62,6 +66,20 @@ public class HouseInfoRestController {
 			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e);
 		}
 	}
+	
+	
+	@GetMapping("/apt-detail-info/{name}")
+	public ResponseEntity<?> getHouseDetailInfo(@PathVariable("name") String name, @RequestParam(value="dongCode") String dongCode){
+		try {
+			List<HouseDetailDto> houseDetailInfoList = detailService.findDetailInfoByApt(name, dongCode);
+			return ResponseEntity.status(HttpStatus.OK).body(houseDetailInfoList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e);
+		}
+	}
+	
+	
 	
 	
 }
