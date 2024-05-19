@@ -10,10 +10,23 @@
     <result column="create_time" property="createTime"/>
   </resultMap>
 
+  <resultMap type="commentDetailDto" id="commentDetail">
+    <result column="user_id" property="userId"/>
+    <result column="post_id" property="postId"/>
+    <result column="img_url" property="imgURL"/>
+    <result column="create_time" property="createTime"/>
+  </resultMap>
+
   <select id="findById" parameterType="long" resultMap="comment">
     SELECT *
     FROM comments
     WHERE id = #{id}
+  </select>
+
+  <select id="findCommentDetailById" parameterType="long" resultMap="commentDetail">
+    SELECT c.*, m.name, m.img_url
+    FROM comments c, members m
+    WHERE c.user_id = m.id and c.id = #{id}
   </select>
 
   <select id="findByPostId" parameterType="long" resultMap="comment">
@@ -22,14 +35,20 @@
     WHERE post_id = #{postId}
   </select>
 
+  <select id="findCommentDetailByPostId" parameterType="long" resultMap="commentDetail">
+    SELECT c.*, m.name, m.img_url
+    FROM comments c, members m
+    WHERE c.user_id = m.id and c.post_id = #{postId}
+  </select>
+
   <select id="findAll" resultMap="comment">
     SELECT *
     FROM comments
   </select>
 
-  <insert id="create" parameterType="commentDto">
-    INSERT INTO comments (user_id, post_id, content, `like`, create_time)
-    VALUES (#{userId}, #{postId}, #{content}, #{like}, #{createTime})
+  <insert id="create" parameterType="commentDto" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO comments (user_id, post_id, content)
+    VALUES (#{userId}, #{postId}, #{content})
   </insert>
 
   <update id="update" parameterType="commentDto">

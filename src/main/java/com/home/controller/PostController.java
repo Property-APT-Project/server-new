@@ -1,7 +1,9 @@
 package com.home.controller;
 
+import com.home.dto.PostDetailDto;
 import com.home.dto.PostDto;
 import com.home.service.PostService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,17 @@ public class PostController {
 
     private final PostService postService;
 
+    @GetMapping("")
+    public ResponseEntity<?> findAll() {
+        try {
+            List<PostDto> posts = postService.findAll();
+            return ResponseEntity.status(HttpStatus.OK).body(posts);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     @PostMapping("/new")
     public ResponseEntity<?> write(@RequestBody PostDto postDto) {
         try {
@@ -37,8 +50,8 @@ public class PostController {
     @GetMapping("/like/{id}")
     public ResponseEntity<?> like(@PathVariable("id") long id) {
         try {
-            postService.like(id);
-            return ResponseEntity.status(HttpStatus.OK).body("성공적으로 좋아요 하였습니다.");
+            int like = postService.like(id);
+            return ResponseEntity.status(HttpStatus.OK).body(like);
         } catch (Exception e) {
             log.info(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -49,7 +62,7 @@ public class PostController {
     public ResponseEntity<?> findById(@PathVariable("id") long id) {
         try {
             postService.hit(id);
-            PostDto postDto = postService.findById(id);
+            PostDetailDto postDto = postService.findPostDetailById(id);
             return ResponseEntity.status(HttpStatus.OK).body(postDto);
         } catch (Exception e) {
             log.info(e.getMessage());

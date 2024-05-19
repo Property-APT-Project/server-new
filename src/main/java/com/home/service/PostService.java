@@ -1,5 +1,6 @@
 package com.home.service;
 
+import com.home.dto.PostDetailDto;
 import com.home.dto.PostDto;
 import java.util.List;
 
@@ -8,6 +9,8 @@ public interface PostService {
     long write(PostDto postDto);
 
     PostDto findById(long id);
+
+    PostDetailDto findPostDetailById(long id);
 
     List<PostDto> findByUserId(long userId);
 
@@ -19,5 +22,5 @@ public interface PostService {
 
     void hit(long id);
 
-    void like(long id);
+    int like(long id);
 }
