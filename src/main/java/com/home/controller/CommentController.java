@@ -1,5 +1,6 @@
 package com.home.controller;
 
+import com.home.dto.CommentDetailDto;
 import com.home.dto.CommentDto;
 import com.home.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,8 @@ public class CommentController {
     public ResponseEntity<?> write(@RequestBody CommentDto commentDto) {
         try {
             long id = commentService.write(commentDto);
-            return ResponseEntity.status(HttpStatus.OK).body("성공적으로 댓글 작성하였습니다.");
+            CommentDetailDto commentDetailDto = commentService.findCommentDetailById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(commentDetailDto);
         } catch (Exception e) {
             log.info(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("댓글 작성 실패하였습니다.");
@@ -37,8 +39,8 @@ public class CommentController {
     @GetMapping("/like/{id}")
     public ResponseEntity<?> like(@PathVariable("id") long id) {
         try {
-            commentService.like(id);
-            return ResponseEntity.status(HttpStatus.OK).body("성공적으로 좋아요 하였습니다.");
+            int like = commentService.like(id);
+            return ResponseEntity.status(HttpStatus.OK).body(like);
         } catch (Exception e) {
             log.info(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

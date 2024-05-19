@@ -1,6 +1,7 @@
 package com.home.service;
 
 import com.home.dto.MemberDto;
+import com.home.dto.MemberJoinDto;
 import com.home.security.jwt.dto.JwtDto;
 import java.io.IOException;
 import java.util.List;
@@ -10,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface MemberService {
 
 
-    public Long join(MemberDto memberDto) throws IllegalArgumentException;
+    public Long join(MemberJoinDto memberJoinDto) throws IllegalArgumentException;
 
     public JwtDto login(String username, String password);
 

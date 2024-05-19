@@ -22,6 +22,6 @@ public class MemberDto {
 	private String address;
 	private String phoneNumber;
 	private String imgURL;
-	private UserRole Role;
+	private UserRole role;
 
 }

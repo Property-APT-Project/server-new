@@ -28,8 +28,8 @@
 	</select>
 
 	<insert id="insertMember" parameterType="memberDto">
-		INSERT INTO members (id, email, name, password, address, phone_number)
-		VALUES (#{id}, #{email}, #{name}, #{password}, #{address}, #{phoneNumber})
+		INSERT INTO members (id, email, name, password, address, phone_number, img_url)
+		VALUES (#{id}, #{email}, #{name}, #{password}, #{address}, #{phoneNumber}, #{imgURL})
 	</insert>
 
 	<insert id="insertRole" parameterType="memberDto">
@@ -49,13 +49,18 @@
 
 	<update id="update" parameterType="memberDto">
 		UPDATE members 
-		SET name = #{name}, password = #{password}, address = #{address}, phone_number = #{phoneNumber}
+		SET name = #{name}, password = #{password}, address = #{address}, phone_number = #{phoneNumber}, img_url=#{imgURL}
 		WHERE id = #{id}
 	</update>
 
 	<update id="updateByEmail" parameterType="memberDto">
 		UPDATE members
-		SET name = #{name}, password = #{password}, address = #{address}, phone_number = #{phoneNumber}
+		<set>
+			name = #{name},
+			address = #{address},
+			phone_number = #{phoneNumber},
+			<if test="imgURL != null and imgURL != ''">img_url = #{imgURL},</if>
+		</set>
 		WHERE email = #{email}
 	</update>
 

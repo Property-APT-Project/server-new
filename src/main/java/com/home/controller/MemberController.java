@@ -1,11 +1,11 @@
 package com.home.controller;
 
 import com.home.dto.MemberDto;
+import com.home.dto.MemberJoinDto;
 import com.home.dto.ProfileDto;
 import com.home.security.jwt.dto.JwtDto;
 import com.home.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
@@ -54,8 +54,8 @@ public class MemberController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
-        if (file.isEmpty()) {
+    public ResponseEntity<String> uploadFile(@RequestParam(value = "file", required = false) MultipartFile file) {
+        if (file == null) {
             return new ResponseEntity<>("default.png", HttpStatus.OK);
 //            return new ResponseEntity<>("File is empty", HttpStatus.BAD_REQUEST);
         }
@@ -89,9 +89,9 @@ public class MemberController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<?> join(@RequestBody @Valid MemberDto memberDto) {
+    public ResponseEntity<?> join(@RequestBody MemberJoinDto memberJoinDto) {
         try {
-            Long id = memberService.join(memberDto);
+            Long id = memberService.join(memberJoinDto);
             return ResponseEntity.status(HttpStatus.OK).body("성공적으로 회원가입되었습니다.");
         } catch (Exception e) {
             log.info(e.getMessage());
@@ -139,6 +139,7 @@ public class MemberController {
                 .name(memberDto.getName())
                 .address(memberDto.getAddress())
                 .phoneNumber(memberDto.getPhoneNumber())
+                .imgURL(memberDto.getImgURL())
                 .build();
         try {
             return ResponseEntity.status(HttpStatus.OK).body(profileDto);

@@ -13,10 +13,31 @@
       select="com.home.mapper.CommentMapper.findByPostId" column="id"/>
   </resultMap>
 
+  <resultMap type="postDetailDto" id="postDetail">
+    <id column="id" property="id"/>
+    <result column="user_id" property="userId"/>
+    <result column="name" property="name"/>
+    <result column="profile_img_url" property="profileImgURL"/>
+    <result column="title" property="title"/>
+    <result column="content" property="content"/>
+    <result column="img_url" property="imgURL"/>
+    <result column="like" property="like"/>
+    <result column="hit" property="hit"/>
+    <result column="create_time" property="createTime"/>
+    <collection property="comments" ofType="com.home.dto.CommentDetailDto"
+      select="com.home.mapper.CommentMapper.findCommentDetailByPostId" column="id"/>
+  </resultMap>
+
   <select id="findById" parameterType="long" resultMap="post">
     SELECT *
     FROM posts
     WHERE id = #{id}
+  </select>
+
+  <select id="findPostDetailById" parameterType="long" resultMap="postDetail">
+    SELECT p.*, m.name, m.img_url as profile_img_url
+    FROM posts p, members m
+    WHERE p.user_id = m.id and p.id = #{id}
   </select>
 
   <select id="findByUserId" parameterType="long" resultMap="post">
@@ -31,8 +52,8 @@
   </select>
 
   <insert id="create" parameterType="postDto">
-    INSERT INTO posts (user_id, title, content, img_url, `like`, hit, create_time)
-    VALUES (#{userId}, #{title}, #{content}, #{imgURL}, #{like}, #{hit}, #{createTime})
+    INSERT INTO posts (user_id, title, content, img_url)
+    VALUES (#{userId}, #{title}, #{content}, #{imgURL})
   </insert>
 
   <update id="update" parameterType="postDto">

@@ -1,6 +1,7 @@
 package com.home.service;
 
 import com.home.dto.MemberDto;
+import com.home.dto.MemberJoinDto;
 import com.home.enums.role.UserRole;
 import com.home.mapper.MemberMapper;
 import com.home.mapper.RefreshTokenMapper;
@@ -49,32 +50,45 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtBlacklistService jwtBlacklistService;
 
-    private static boolean patternMatches(String emailAddress, String regexPattern) {
+    private static boolean patternMatches(String pattern, String regexPattern) throws IllegalArgumentException{
+        if (pattern == null) {
+            throw new IllegalArgumentException("항목이 존재하지 않습니다.");
+        }
         return !Pattern.compile(regexPattern)
-                .matcher(emailAddress)
+                .matcher(pattern)
                 .matches();
     }
 
     @Transactional
-    public Long join(MemberDto memberDto) throws IllegalArgumentException {
+    public Long join(MemberJoinDto memberJoinDto) throws IllegalArgumentException {
 
+        validateEmail(memberJoinDto.getEmail());
+        validatePassword(memberJoinDto.getPassword());
+        validatePasswordSame(memberJoinDto.getPassword(), memberJoinDto.getConfirmPassword());
+//        validateAddress(memberJoinDto.getAddress());
+        validatePhoneNumber(memberJoinDto.getPhoneNumber());
+
+        MemberDto memberDto = memberJoinDto.toMemberDto();
         validateDuplicateMember(memberDto);
-        validateEmail(memberDto.getEmail());
-        validatePassword(memberDto.getPassword());
-        validateAddress(memberDto.getAddress());
-        validatePhoneNumber(memberDto.getPhoneNumber());
+
         memberDto.setId(snowFlake.generateSnowFlake());
         memberDto.setPassword(passwordEncoder.encode(memberDto.getPassword()));
         memberDto.setRole(UserRole.ROLE_USER);
         memberMapper.insertMember(memberDto);
         memberMapper.insertRole(memberDto);
 //        memberMapper.save(memberDto);
-        return memberDto.getId();
+        return memberJoinDto.getId();
+    }
+
+    private void validatePasswordSame(String password, String confirmPassword) {
+        if (!password.equals(confirmPassword)) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
     }
 
     private void validateEmail(String email) {
         if (patternMatches(email,
-                "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$")) {
+                "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
             throw new IllegalArgumentException("이메일이 유효하지 않습니다.");
         }
 
@@ -87,15 +101,21 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
-    private void validateAddress(String password) {
+    private void validateAddress(String address) {
+        if (address.isEmpty()) {
+            return;
+        }
         // "우편번호5자리, 주소, 상세 주소"
-        if (patternMatches(password,
-                "^\\d{5}, [\\w\\s.,-]+, [\\w\\s.,-]+$\n")) {
+        if (patternMatches(address,
+                "^\\d{5}$\n")) {
             throw new IllegalArgumentException("주소가 유효하지 않습니다.");
         }
     }
 
     private void validatePhoneNumber(String phoneNumber) {
+        if (phoneNumber.isEmpty()) {
+            return;
+        }
         // "우편번호5자리, 주소, 상세 주소"
         if (patternMatches(phoneNumber,
                 "^010-[0-9]{4}-[0-9]{4}$")) {
