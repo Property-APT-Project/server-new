@@ -57,7 +57,17 @@
     WHERE p.user_id = m.id
   </select>
 
-  <insert id="create" parameterType="postDto">
+  <select id="findAllPostDetailWithPagination" resultMap="postDetail">
+    SELECT p.*, m.name, m.img_url as profile_img_url
+    FROM posts p, members m
+    WHERE p.user_id = m.id
+    <if test="sort != null and sort.trim() != ''">
+      ORDER BY ${sort} ${order}
+    </if>
+    LIMIT #{limit} OFFSET #{offset}
+  </select>
+
+  <insert id="create" parameterType="postDto"  useGeneratedKeys="true" keyProperty="id">
     INSERT INTO posts (user_id, title, content, img_url)
     VALUES (#{userId}, #{title}, #{content}, #{imgURL})
   </insert>

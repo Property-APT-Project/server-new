@@ -28,7 +28,8 @@ public class PostServiceImpl implements PostService {
         MemberDto memberDto = memberMapper.findByEmail(username);
 
         postDto.setUserId(memberDto.getId());
-        return postMapper.create(postDto);
+        postMapper.create(postDto);
+        return postDto.getId();
     }
 
     @Override
@@ -54,6 +55,12 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostDetailDto> findAllPostDetail() {
         return postMapper.findAllPostDetail();
+    }
+
+    @Override
+    public List<PostDetailDto> findAllPostDetail(int page, int limit, String sort, String order) {
+        int offset = (page - 1) * limit;
+        return postMapper.findAllPostDetailWithPagination(offset, limit, sort, order);
     }
 
     @Override

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -26,22 +27,30 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("")
-    public ResponseEntity<?> findAll() {
+    public ResponseEntity<?> findAll(
+            @RequestParam(name = "_page", defaultValue = "1") int page,
+            @RequestParam(name = "_limit", defaultValue = "5") int limit,
+            @RequestParam(name = "_sort", defaultValue = "createdAt") String sort,
+            @RequestParam(name = "_order", defaultValue = "desc") String order) {
         try {
 //            List<PostDto> posts = postService.findAll();
-            List<PostDetailDto> posts = postService.findAllPostDetail();
+            System.out.println("page = " + page);
+            System.out.println("limit = " + limit);
+            System.out.println("sort = " + sort);
+            System.out.println("order = " + order);
+            List<PostDetailDto> posts = postService.findAllPostDetail(page, limit, sort, order);
             return ResponseEntity.status(HttpStatus.OK).body(posts);
         } catch (Exception e) {
             log.info(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-
     @PostMapping("/new")
     public ResponseEntity<?> write(@RequestBody PostDto postDto) {
         try {
             long id = postService.write(postDto);
-            return ResponseEntity.status(HttpStatus.OK).body("성공적으로 게시글 작성하였습니다.");
+            PostDetailDto postDetailById = postService.findPostDetailById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(postDetailById);
         } catch (Exception e) {
             log.info(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("게시글 작성 실패하였습니다.");
