@@ -18,6 +18,8 @@ public interface PostService {
 
     List<PostDetailDto> findAllPostDetail();
 
+    List<PostDetailDto> findAllPostDetail(int page, int limit, String sort, String order);
+
     void modify(PostDto postDto);
 
     void delete(long id);
