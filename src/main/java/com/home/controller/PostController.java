@@ -28,7 +28,8 @@ public class PostController {
     @GetMapping("")
     public ResponseEntity<?> findAll() {
         try {
-            List<PostDto> posts = postService.findAll();
+//            List<PostDto> posts = postService.findAll();
+            List<PostDetailDto> posts = postService.findAllPostDetail();
             return ResponseEntity.status(HttpStatus.OK).body(posts);
         } catch (Exception e) {
             log.info(e.getMessage());

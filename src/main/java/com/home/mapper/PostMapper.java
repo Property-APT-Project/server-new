@@ -18,6 +18,8 @@ public interface PostMapper {
 
     List<PostDto> findAll();
 
+    List<PostDetailDto> findAllPostDetail();
+
     void update(PostDto postDto);
 
     void delete(long id);

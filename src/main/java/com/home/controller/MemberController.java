@@ -135,6 +135,7 @@ public class MemberController {
         System.out.println("credential " + authentication.getCredentials());
         System.out.println("detail " + authentication.getDetails());
         ProfileDto profileDto = ProfileDto.builder()
+                .id(memberDto.getId())
                 .email(memberDto.getEmail())
                 .name(memberDto.getName())
                 .address(memberDto.getAddress())

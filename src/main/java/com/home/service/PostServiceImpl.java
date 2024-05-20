@@ -52,6 +52,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<PostDetailDto> findAllPostDetail() {
+        return postMapper.findAllPostDetail();
+    }
+
+    @Override
     public void modify(PostDto postDto) {
         postMapper.update(postDto);
     }
