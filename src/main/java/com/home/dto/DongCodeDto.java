@@ -1,5 +1,7 @@
 package com.home.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +14,8 @@ public class DongCodeDto {
 	private String sidoName;
 	private String gugunName;
 	private String dongName;
-	
+	private List<HouseSimpleDto> aptList;
+	private int aptListCount;
 	
 	
 
