@@ -26,4 +26,10 @@ public class HouseSaleServiceImpl implements HouseSaleService {
 		return mapper.findSaleListByLocation(sLat, eLat, sLng, eLng);
 	}
 
+	@Override
+	public List<HouseSaleDto> findSaleListByDongCode(String dongCode) throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.findSaleListByDongCode(dongCode);
+	}
+
 }

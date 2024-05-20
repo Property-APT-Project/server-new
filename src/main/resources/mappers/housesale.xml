@@ -21,4 +21,13 @@
 		and location_lng between #{sLng} and #{eLng}
 	</select>
 	
+	<select id="findSaleListByDongCode" parameterType="map" resultType="HouseSaleDto">
+		select dong_code as dongCode, complex_name as aptName, title as description,  price_title as price, location_lng as lng,
+		location_lat as lat, img_url1 as img1, img_url2 as img2, img_url3 as img3, img_url4 as img4, img_url5 as img5,
+		room_floor as floor, room_size as size, maintenance_cost
+		from apt_sale_data
+		where dong_code= #{dongCode}
+	</select>
+	
+	
 </mapper>
