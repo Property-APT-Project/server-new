@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.home.mapper.AnnouncementMapper">
+  <resultMap id="announcement" type="announcementDto">
+    <result column="announcement_no" property="announcementNo"/>
+    <result column="member_id" property="memberId"/>
+    <result column="register_time" property="registerTime"/>
+    <result column="name" property="memberName" />
+  </resultMap>
+
+  <insert id="create" parameterType="announcementDto" >
+    INSERT INTO announcement (member_id, subject, content, hit, register_time)
+    VALUES (#{memberId}, #{subject}, #{content}, #{hit}, #{registerTime})
+  </insert>
+  <select id="findById" parameterType="int" resultMap="announcement">
+    SELECT ant.*, m.name
+    FROM announcement ant, members m
+    WHERE ant.member_id = m.id and announcement_no = #{announcementNo}
+  </select>
+  <select id="findAll" resultMap="announcement">
+    SELECT *
+    FROM announcement
+  </select>
+  <update id="update" parameterType="announcementDto">
+    UPDATE announcement
+    SET subject = #{subject}, content = #{content}, hit = #{hit}, register_time = #{registerTime}
+    WHERE announcement_no = #{announcementNo}
+  </update>
+  <delete id="delete" parameterType="int">
+    DELETE
+    FROM announcement
+    WHERE announcement_no = #{announcementNo}
+  </delete>
+
+</mapper>
