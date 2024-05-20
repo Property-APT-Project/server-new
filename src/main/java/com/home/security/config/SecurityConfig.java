@@ -50,6 +50,7 @@ public class SecurityConfig {
                         authorize -> authorize
                                 .requestMatchers("/members/login", "/members/join", "/members/health", "/members/refresh").permitAll()
                                 .requestMatchers( "/members/upload/**").permitAll()
+                                .requestMatchers("/posts/**").permitAll()
 //                                .requestMatchers("/members/health").permitAll()
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/api-docs/**").permitAll()

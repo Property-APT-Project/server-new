@@ -8,6 +8,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 public class ProfileDto {
+    private long id;
     private String email;
     private String name;
     private String address;

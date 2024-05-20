@@ -16,6 +16,8 @@ public interface PostService {
 
     List<PostDto> findAll();
 
+    List<PostDetailDto> findAllPostDetail();
+
     void modify(PostDto postDto);
 
     void delete(long id);
