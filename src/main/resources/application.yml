@@ -20,6 +20,27 @@ spring:
     host: localhost
     port: 6379
 
+  mail:
+    host: smtp.naver.com
+    port: 465
+    username: dons97@naver.com
+    password: PX7RT6KLL829
+    transport:
+      protocol: smtp
+    properties:
+      mail:
+        debug: true
+        smtp:
+          auth: true
+          starttls:
+            required: true
+            enable: true
+          ssl:
+            protocols: TLSv1.2
+            trust: smtp.naver.com
+            enable: true
+
+
 spring-doc:
   swagger-ui:
     enabled: true
@@ -32,5 +53,6 @@ mybatis:
   type-aliases-package: com.home.dto;
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-  
-  
+
+email:
+  from: dons97@naver.com

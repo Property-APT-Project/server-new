@@ -37,13 +37,13 @@ public class PasswordServiceImpl implements PasswordService{
         }
     }
 
-    private void validatePasswordSame(String password, String confirmPassword) {
+    public void validatePasswordSame(String password, String confirmPassword) {
         if (!password.equals(confirmPassword)) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
     }
 
-    private void validatePassword(String password) {
+    public void validatePassword(String password) {
         if (patternMatches(password,
                 "^(?=.*[A-Za-z])(?=.*\\d)(?=(.*[!@#$%^&*(),.?\":{}|<>]){2,}).{8,}$")) {
             throw new IllegalArgumentException("비밀번호가 유효하지 않습니다.");

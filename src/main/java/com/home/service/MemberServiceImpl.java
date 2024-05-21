@@ -187,7 +187,6 @@ public class MemberServiceImpl implements MemberService {
         if (!username.equals(memberDto.getEmail())) {
             throw new IllegalArgumentException("회원 이름이 일치하지 않습니다.");
         }
-
         memberMapper.updateByEmail(memberDto);
     }
 
