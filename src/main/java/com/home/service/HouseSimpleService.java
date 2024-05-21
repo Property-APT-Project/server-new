@@ -12,4 +12,6 @@ public interface HouseSimpleService {
 	List<DongCodeDto> findAptListGroupByDongByLngLatRange(String sLat, String eLat, String sLng, String eLng);
 	
 	List<HouseSimpleDto> findAptListByDongCode(String dongCode);
+	
+	List<HouseSimpleDto> findAptListByAptName(String aptName);
 }

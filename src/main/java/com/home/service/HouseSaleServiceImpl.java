@@ -32,4 +32,16 @@ public class HouseSaleServiceImpl implements HouseSaleService {
 		return mapper.findSaleListByDongCode(dongCode);
 	}
 
+	@Override
+	public List<HouseSaleDto> findSaleListByKeyword(String aptName) throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.findSaleListByKeyword(aptName);
+	}
+
+	@Override
+	public List<HouseSaleDto> findSaleListById(String id) throws Exception {
+		// TODO Auto-generated method stub
+		return mapper.findSaleListById(id);
+	}
+
 }
