@@ -59,5 +59,11 @@ public class HouseSimpleServiceImpl implements HouseSimpleService{
 		return mapper.findAptListByDongCode(dongCode);
 	}
 
+	@Override
+	public List<HouseSimpleDto> findAptListByAptName(String aptName) {
+		// TODO Auto-generated method stub
+		return mapper.findAptListByAptName(aptName);
+	}
+
 	
 }

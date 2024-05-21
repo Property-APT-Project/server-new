@@ -11,4 +11,5 @@ import com.home.dto.HouseSimpleDto;
 public interface HouseSimpleMapper {
 	List<HouseSimpleDto> findAptListByLngLatRange(@Param("sLat") String sLat, @Param("eLat") String eLat, @Param("sLng") String sLng, @Param("eLng") String eLng);
 	List<HouseSimpleDto> findAptListByDongCode(@Param("dongCode") String dongCode);
+	List<HouseSimpleDto> findAptListByAptName(@Param("aptName") String aptName);
 }
