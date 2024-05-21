@@ -3,9 +3,12 @@ package com.home.controller;
 import com.home.dto.PostDetailDto;
 import com.home.dto.PostDto;
 import com.home.service.PostService;
+import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
@@ -100,6 +104,34 @@ public class PostController {
         } catch (Exception e) {
             log.info(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("게시글 삭제 실패하였습니다.");
+        }
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadFile(@RequestParam(value = "file", required = false) MultipartFile file) {
+        if (file == null) {
+            return new ResponseEntity<>("apt-default.png", HttpStatus.OK);
+//            return new ResponseEntity<>("File is empty", HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            String fileName = postService.uploadImg(file);
+            return new ResponseEntity<>(fileName, HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<>("File upload failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/upload/{filename:.+}")
+    public ResponseEntity<?> serveFile(@PathVariable String filename) {
+        try {
+            Resource resource = postService.serveFile(filename);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미지 조회 실패");
         }
     }
 }

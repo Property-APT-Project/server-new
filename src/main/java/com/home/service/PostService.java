@@ -2,7 +2,10 @@ package com.home.service;
 
 import com.home.dto.PostDetailDto;
 import com.home.dto.PostDto;
+import java.io.IOException;
 import java.util.List;
+import org.springframework.core.io.Resource;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface PostService {
 
@@ -27,4 +30,8 @@ public interface PostService {
     void hit(long id);
 
     int like(long id);
+
+    String uploadImg(MultipartFile file) throws IOException;
+
+    Resource serveFile(String filename);
 }

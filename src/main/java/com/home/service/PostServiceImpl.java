@@ -5,17 +5,26 @@ import com.home.dto.PostDetailDto;
 import com.home.dto.PostDto;
 import com.home.mapper.MemberMapper;
 import com.home.mapper.PostMapper;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
+    private static final String UPLOAD_DIR = "uploads/community/";
     private final PostMapper postMapper;
     private final MemberMapper memberMapper;
 
@@ -88,5 +97,31 @@ public class PostServiceImpl implements PostService {
         postMapper.update(postDto);
 
         return postMapper.findById(id).getLike();
+    }
+
+    @Override
+    public String uploadImg(MultipartFile file) throws IOException {
+        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        Path path = Paths.get(UPLOAD_DIR + fileName);
+        Files.createDirectories(path.getParent());
+        Files.write(path, file.getBytes());
+
+        return fileName;
+    }
+
+    @Override
+    public Resource serveFile(String filename) throws RuntimeException {
+        try {
+            Path file = Paths.get(UPLOAD_DIR).resolve(filename);
+            Resource resource = new UrlResource(file.toUri());
+
+            if (resource.exists() || resource.isReadable()) {
+                return resource;
+            } else {
+                throw new RuntimeException("Could not read the file!");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Could not serve the file!", e);
+        }
     }
 }

@@ -51,9 +51,9 @@ public class PasswordResetController {
         try {
             emailService.sendPasswordResetEmail(email, token);
         } catch (MessagingException e) {
-            return ResponseEntity.status(500).body("Failed to send email");
+            return ResponseEntity.status(500).body("이메일 발송 실패하였습니다.");
         }
-        return ResponseEntity.ok("Password reset email sent");
+        return ResponseEntity.ok("이메일을 발송하였습니다.");
     }
 
     @PostMapping("/reset")
@@ -93,9 +93,9 @@ public class PasswordResetController {
 
         System.out.println(resetToken);
         if (resetToken == null || resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-            return ResponseEntity.badRequest().body("Invalid or expired token");
+            return ResponseEntity.badRequest().body("유효하지 않거나 만료된 토큰입니다.");
         }
 
-        return ResponseEntity.ok("Token is valid");
+        return ResponseEntity.ok("토큰이 유효합니다.");
     }
 }
