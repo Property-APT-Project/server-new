@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.home.mapper.InterestMapper">
+  <resultMap type="InterestDto" id="interest">
+  	<result column="id" property="id"/>
+    <result column="user_id" property="userId"/>
+    <result column="category" property="category"/>
+    <result column="interest_id" property="interestId"/>
+    <result column="lng" property="lng"/>
+    <result column="lat" property="lat"/>
+  </resultMap>
+  
+  <select id="findAllUserInterestSale" parameterType="long" resultMap="interest">
+    SELECT id, user_id, category, interest_id, lng, lat
+    FROM interest
+    WHERE user_id = #{userId} and category = 1
+  </select>
+  
+  <select id="findInterestById" parameterType="int" resultMap="interest">
+    SELECT id, user_id, category, interest_id, lng, lat
+    FROM interest
+    WHERE id = #{id}
+  </select>
+
+
+  <select id="findAllUserInterestComplex" parameterType="long" resultMap="interest">
+    SELECT id, user_id, category, interest_id, lng, lat
+    FROM interest
+    WHERE user_id = #{userId} and category = 2
+  </select>
+
+
+  <insert id="insertInterest" parameterType="InterestDto">
+    INSERT INTO interest (user_id, category, interest_id, lng, lat)
+    VALUES (#{userId}, #{category}, #{interestId}, #{lng}, #{lat})
+  </insert>
+
+  <delete id="deleteInterest" parameterType="int">
+    DELETE FROM interest where id = #{id}
+  </delete>
+
+</mapper>

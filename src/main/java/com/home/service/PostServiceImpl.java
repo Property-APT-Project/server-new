@@ -25,6 +25,8 @@ public class PostServiceImpl implements PostService {
         Authentication authentication = securityContext.getAuthentication();
 
         String username = (String) authentication.getPrincipal();
+        
+       System.out.println("test: " + username);
         MemberDto memberDto = memberMapper.findByEmail(username);
 
         postDto.setUserId(memberDto.getId());
