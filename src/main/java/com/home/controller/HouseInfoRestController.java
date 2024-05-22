@@ -37,21 +37,11 @@ public class HouseInfoRestController {
 		this.saleService = saleService;
 	}
 	
-	@GetMapping("/complexes/dong-code/{code}")
-	public ResponseEntity<?> getHouseInfoByDongCode(@PathVariable("code") String code){
-		try {
-			List<HouseInfoDto> houseInfoList = infoService.findAllbyDongCode(code);
-			return ResponseEntity.status(HttpStatus.OK).body(houseInfoList);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e);
-		}
-	}
 	
 	@GetMapping("/complexes/keyword/{name}")
 	public ResponseEntity<?> getHouseInfoListByKeyword(@PathVariable("name") String name){
 		try {
-			List<HouseInfoDto> houseInfoList = infoService.findAllbyKeyword(name);
+			List<HouseSimpleDto> houseInfoList = simpleService.findAptListByAptName(name);
 			return ResponseEntity.status(HttpStatus.OK).body(houseInfoList);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -72,6 +62,18 @@ public class HouseInfoRestController {
 			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e);
 		}
 	}
+	
+	@GetMapping("/complexes/dong-code/{code}")
+	public ResponseEntity<?> getHouseInfoByDongCode(@PathVariable("code") String code){
+		try {
+			List<HouseSimpleDto> houseInfoList = simpleService.findAptListByDongCode(code);
+			return ResponseEntity.status(HttpStatus.OK).body(houseInfoList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e);
+		}
+	}
+	
 	
 	@GetMapping("/complexes/dong-group")
 	public ResponseEntity<?> getHouseInfoGroupByRange(@RequestParam(value="sLat") String sLat,
@@ -124,6 +126,38 @@ public class HouseInfoRestController {
 		}
 	}
 	
+	@GetMapping("/sale-articles/dong-code/{code}")
+	public ResponseEntity<?> getHouseSaleInfoByDongCode(@PathVariable("code") String code){
+		try {
+			List<HouseSaleDto> houseSaleInfoList = saleService.findSaleListByDongCode(code);
+			return ResponseEntity.status(HttpStatus.OK).body(houseSaleInfoList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e);
+		}
+	}
+	
+	@GetMapping("/sale-articles/id/{id}")
+	public ResponseEntity<?> getHouseSaleInfoById(@PathVariable("id") String id){
+		try {
+			List<HouseSaleDto> houseSaleInfoList = saleService.findSaleListById(id);
+			return ResponseEntity.status(HttpStatus.OK).body(houseSaleInfoList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e);
+		}
+	}
+	
+	@GetMapping("/sale-articles")
+	public ResponseEntity<?> getHouseSaleInfoByKeyword(@RequestParam(value="keyword") String keyword){
+		try {
+			List<HouseSaleDto> houseSaleInfoList = saleService.findSaleListByKeyword(keyword);
+			return ResponseEntity.status(HttpStatus.OK).body(houseSaleInfoList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e);
+		}
+	}
 	
 	
 }

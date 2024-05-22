@@ -11,4 +11,17 @@
 		and longitude between #{sLng} and #{eLng}
 	</select>
 	
+	<select id="findAptListByDongCode" parameterType="map" resultType="HouseSimpleDto">
+		select complexName as aptName, cortarNo as dongCode, address,  latitude as lat, longitude as lng, images1 as thumbImg  
+		from complex_detail_info
+		where cortarNo = #{dongCode}
+	</select>
+	
+	<select id="findAptListByAptName" parameterType="map" resultType="HouseSimpleDto">
+		select complexName as aptName, cortarNo as dongCode, address,  latitude as lat, longitude as lng, images1 as thumbImg  
+		from complex_detail_info
+		where complexName LIKE CONCAT('%', #{aptName}, '%');
+	</select>
+	
+	
 </mapper>

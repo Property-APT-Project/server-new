@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class HouseSaleDto {
 	
+	private String id;
 	private String dongCode;
 	private String aptName;
 	private String description;
