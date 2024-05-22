@@ -11,6 +11,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,6 +64,7 @@ public class PostController {
         }
     }
 
+
     @GetMapping("/like/{id}")
     public ResponseEntity<?> like(@PathVariable("id") long id) {
         try {
@@ -77,7 +81,25 @@ public class PostController {
         try {
             postService.hit(id);
             PostDetailDto postDto = postService.findPostDetailById(id);
+            System.out.println(postDto);
             return ResponseEntity.status(HttpStatus.OK).body(postDto);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/my-feed")
+    public ResponseEntity<?> findByEmail() {
+        try {
+            SecurityContext securityContext = SecurityContextHolder.getContext();
+            Authentication authentication = securityContext.getAuthentication();
+
+            String username = (String) authentication.getPrincipal();
+
+            List<PostDetailDto> posts = postService.findByEmail(username);
+//            PostDetailDto postDto = postService.findPostDetailById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(posts);
         } catch (Exception e) {
             log.info(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -89,6 +111,7 @@ public class PostController {
         try {
             postDto.setId(id);
             postService.modify(postDto);
+            System.out.println(postDto);
             return ResponseEntity.status(HttpStatus.OK).body("성공적으로 게시글 수정하였습니다.");
         } catch (Exception e) {
             log.info(e.getMessage());
@@ -99,7 +122,12 @@ public class PostController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") long id) {
         try {
-            postService.delete(id);
+            SecurityContext securityContext = SecurityContextHolder.getContext();
+            Authentication authentication = securityContext.getAuthentication();
+
+            String username = (String) authentication.getPrincipal();
+
+            postService.deletePostById(username, id);
             return ResponseEntity.status(HttpStatus.OK).body("성공적으로 게시글 삭제하였습니다.");
         } catch (Exception e) {
             log.info(e.getMessage());
@@ -124,6 +152,7 @@ public class PostController {
 
     @GetMapping("/upload/{filename:.+}")
     public ResponseEntity<?> serveFile(@PathVariable String filename) {
+        System.out.println(filename);
         try {
             Resource resource = postService.serveFile(filename);
             return ResponseEntity.ok()

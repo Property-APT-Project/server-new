@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -52,8 +53,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> findByUserId(long userId) {
+    public List<PostDetailDto> findByUserId(long userId) {
         return postMapper.findByUserId(userId);
+    }
+
+    @Override
+    public List<PostDetailDto> findByEmail(String email) {
+        return postMapper.findByEmail(email);
     }
 
     @Override
@@ -81,6 +87,22 @@ public class PostServiceImpl implements PostService {
     public void delete(long id) {
         postMapper.delete(id);
     }
+
+    @Override
+    public void deletePostById(String username, Long id) throws IllegalArgumentException {
+        List<PostDetailDto> posts = findByEmail(username);
+
+        Optional<PostDetailDto> postToDelete = posts.stream()
+                .filter(post -> post.getId() == id)
+                .findFirst();
+
+        if (postToDelete.isPresent()) {
+            delete(id);
+        } else {
+            throw new IllegalArgumentException("Post with id " + id + " does not exist for user " + username);
+        }
+    }
+
 
     @Override
     public void hit(long id) {
