@@ -24,6 +24,12 @@
     FROM interest
     WHERE id = #{id}
   </select>
+  
+  <select id="findInterestByUserAndInterestId" parameterType="map" resultMap="interest">
+    SELECT id, user_id, category, interest_id, lng, lat
+    FROM interest
+    WHERE user_id = #{userId} and interest_id = #{interestId}
+  </select>
 
 
   <select id="findAllUserInterestComplex" parameterType="long" resultMap="interest">

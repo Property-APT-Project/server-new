@@ -31,6 +31,8 @@ public class InterestServiceImpl implements InterestService {
 		String username = (String) authentication.getPrincipal();
 		MemberDto memberDto = memberMapper.findByEmail(username);
 		
+		System.out.println("user Name insterest: " + username);
+		
 		
 		return interestMapper.findAllUserInterestComplex(memberDto.getId());
 
@@ -45,6 +47,8 @@ public class InterestServiceImpl implements InterestService {
 		String username = (String) authentication.getPrincipal();
 		MemberDto memberDto = memberMapper.findByEmail(username);
 		
+		System.out.println("user Name insterest: " + memberDto.getId());
+		
 		return interestMapper.findAllUserInterestSale(memberDto.getId());
 	}
 
@@ -52,12 +56,21 @@ public class InterestServiceImpl implements InterestService {
 	public void insertInterest(InterestDto interestDto) {
 		SecurityContext securityContext = SecurityContextHolder.getContext();
 		Authentication authentication = securityContext.getAuthentication();
-		
+		System.out.println("Interest Dto: " + interestDto);
 		
 		String username = (String) authentication.getPrincipal();
+		
+		System.out.println("Interest username: " + username);
 		MemberDto memberDto = memberMapper.findByEmail(username);
 		
+		
+		if(interestMapper.findInterestByUserAndInterestId(memberDto.getId(), interestDto.getInterestId()) != null)
+			return;
+			
+		
 		interestDto.setUserId(memberDto.getId());
+		
+		System.out.println("Interest Dto: " + interestDto);
 		
 		interestMapper.insertInterest(interestDto);
 		
@@ -65,7 +78,7 @@ public class InterestServiceImpl implements InterestService {
 	}
 
 	@Override
-	public boolean deleteInterest(int id) {
+	public boolean deleteInterest(String interestId) {
 		SecurityContext securityContext = SecurityContextHolder.getContext();
 		Authentication authentication = securityContext.getAuthentication();
 		
@@ -73,12 +86,13 @@ public class InterestServiceImpl implements InterestService {
 		String username = (String) authentication.getPrincipal();
 		MemberDto memberDto = memberMapper.findByEmail(username);
 		
-		InterestDto interestDto = interestMapper.findInterestById(id);
+		InterestDto interestDto = interestMapper.findInterestByUserAndInterestId(memberDto.getId(), interestId);
 		
-		if(interestDto.getUserId() != memberDto.getId())
+		
+		if(interestDto == null)
 			return false;
 		
-		interestMapper.deleteInterest(id);
+		interestMapper.deleteInterest(interestDto.getId());
 		
 		return true;
 		
