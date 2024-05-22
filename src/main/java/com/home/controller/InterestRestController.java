@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.home.dto.InterestDto;
 import com.home.service.InterestService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,6 +55,8 @@ public class InterestRestController {
 	
 	@PostMapping("/post")
 	public ResponseEntity<?> registInterest(@RequestBody InterestDto interestDto){
+		
+		System.out.println("컨트롤러에서 :" + interestDto);
 		try {
 			interestService.insertInterest(interestDto);
 			return ResponseEntity.status(HttpStatus.OK).body("interest 등록성공 ");
@@ -65,10 +68,10 @@ public class InterestRestController {
 		
 	}
 	
-	@PostMapping("/delete/{id}")
-	public ResponseEntity<?> delete(@PathVariable("id") int id){
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<?> delete(@PathVariable("id") String interestId){
 		try {
-			interestService.deleteInterest(id);
+			interestService.deleteInterest(interestId);
 			return ResponseEntity.status(HttpStatus.OK).body("interest 삭제 성공 ");
 		} catch (Exception e) {
 			log.info(e.getMessage());

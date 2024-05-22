@@ -10,6 +10,6 @@ public interface InterestService {
 	
 	
 	void insertInterest(InterestDto interestDto);
-	boolean deleteInterest(int id);
+	boolean deleteInterest(String interestId);
 
 }
