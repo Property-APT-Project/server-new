@@ -15,7 +15,9 @@ public interface PostMapper {
 
     PostDetailDto findPostDetailById(long id);
 
-    List<PostDto> findByUserId(long userId);
+    List<PostDetailDto> findByUserId(long userId);
+
+    List<PostDetailDto> findByEmail(String email);
 
     List<PostDto> findAll();
 

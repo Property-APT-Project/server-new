@@ -40,10 +40,16 @@
     WHERE p.user_id = m.id and p.id = #{id}
   </select>
 
-  <select id="findByUserId" parameterType="long" resultMap="post">
-    SELECT *
-    FROM posts
-    WHERE user_id = #{userId}
+  <select id="findByUserId" parameterType="long" resultMap="postDetail">
+    SELECT p.*, m.name, m.img_url as profile_img_url
+    FROM posts p, members m
+    WHERE p.user_id = m.id and user_id = #{userId}
+  </select>
+
+  <select id="findByEmail" parameterType="string" resultMap="postDetail">
+    SELECT p.*, m.name, m.img_url as profile_img_url
+    FROM posts p, members m
+    WHERE p.user_id = m.id and m.email = #{email}
   </select>
 
   <select id="findAll" resultMap="post">

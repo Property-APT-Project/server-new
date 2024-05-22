@@ -15,7 +15,9 @@ public interface PostService {
 
     PostDetailDto findPostDetailById(long id);
 
-    List<PostDto> findByUserId(long userId);
+    List<PostDetailDto> findByUserId(long userId);
+
+    List<PostDetailDto> findByEmail(String email);
 
     List<PostDto> findAll();
 
@@ -26,6 +28,8 @@ public interface PostService {
     void modify(PostDto postDto);
 
     void delete(long id);
+
+    void deletePostById(String username, Long id);
 
     void hit(long id);
 
