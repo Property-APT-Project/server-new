@@ -68,7 +68,7 @@
     FROM posts p, members m
     WHERE p.user_id = m.id
     <if test="sort != null and sort.trim() != ''">
-      ORDER BY ${sort} ${order}
+      ORDER BY `${sort}` ${order}
     </if>
     LIMIT #{limit} OFFSET #{offset}
   </select>
