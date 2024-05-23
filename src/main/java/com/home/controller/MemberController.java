@@ -93,6 +93,9 @@ public class MemberController {
         try {
             Long id = memberService.join(memberJoinDto);
             return ResponseEntity.status(HttpStatus.OK).body("성공적으로 회원가입되었습니다.");
+        } catch (IllegalArgumentException e) {
+            log.info(e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             log.info(e.getMessage());
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());
