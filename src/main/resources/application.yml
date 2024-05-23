@@ -15,11 +15,44 @@ spring:
     username: ssafy
     password: ssafyssafy
 
+#redis
+  redis:
+    host: localhost
+    port: 6379
 
+  mail:
+    host: smtp.naver.com
+    port: 465
+    username: YOUR_NAME
+    password: YOUR_PASSWORD
+    transport:
+      protocol: smtp
+    properties:
+      mail:
+        debug: true
+        smtp:
+          auth: true
+          starttls:
+            required: true
+            enable: true
+          ssl:
+            protocols: TLSv1.2
+            trust: smtp.naver.com
+            enable: true
+
+
+spring-doc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  api-docs.path: /api-docs
 
 #mybatis
 mybatis:
   mapper-locations: mappers/*.xml
   type-aliases-package: com.home.dto;
-  
-  
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+email:
+  from: dons97@naver.com

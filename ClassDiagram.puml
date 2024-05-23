@@ -1,0 +1,892 @@
+@startuml
+class com.home.dto.HouseInfoDto {
+- int buildYear
+- String roadName
+- String dong
+- String dongCode
+- String aptName
+- String jibun
+- String lng
+- String lat
+}
+
+class com.home.dto.HouseDealDto {
+- String dealAmount
+- int dealYear
+- int dealMonth
+- String area
+- String floor
+- String apartmentName
+}
+
+interface com.home.mapper.HouseDealMapper {
+~ List<HouseDealDto> findAllByAptCode(String)
+~ List<HouseDealDto> findAllByAptCodeYear(String,int)
+~ List<HouseDealDto> findAllByAptCodeYearMonth(String,int,int)
+}
+
+class com.home.dto.PasswordDto {
+~ String email
+~ String curPassword
+~ String newPassword
+~ String confirmPassword
+}
+
+interface com.home.mapper.MemberMapper {
++ void insertMember(MemberDto)
++ void insertRole(MemberDto)
++ void insertRefreshToken(Map<String,Object>)
++ void deleteRefreshToken(long)
++ MemberDto findById(long)
++ MemberDto findByEmail(String)
++ List<MemberDto> findAll()
++ void update(MemberDto)
++ void updateByEmail(MemberDto)
++ void delete(long)
++ void deleteByEmail(String)
+}
+
+class com.home.controller.HouseDealRestController {
+- HouseDealService service
++ ResponseEntity<?> getDealListByAptName(String)
++ ResponseEntity<?> getDealListByAptNameYear(String,int)
++ ResponseEntity<?> getDealListByAptNameYearMonth(String,int,int)
+}
+
+
+class com.home.service.DongCodeServiceImpl {
+- DongCodeMapper mapper
++ List<DongCodeDto> findAllSido()
++ List<DongCodeDto> findGugunBySido(String)
++ List<DongCodeDto> findDongByGugun(String)
+}
+
+
+class com.home.DemoApplicationTests {
+~ void contextLoads()
+}
+
+class com.home.security.jwt.dto.JwtDto {
+- String grantType
+- String accessToken
+- String refreshToken
+}
+
+interface com.home.mapper.HouseSimpleMapper {
+~ List<HouseSimpleDto> findAptListByLngLatRange(String,String,String,String)
+~ List<HouseSimpleDto> findAptListByDongCode(String)
+~ List<HouseSimpleDto> findAptListByAptName(String)
+}
+
+class com.home.dto.CommentDetailDto {
+- long id
+- long userId
+- long postId
+- String name
+- String imgURL
+- String content
+- Integer like
+- LocalDateTime createTime
+}
+
+class com.home.service.SearchServiceImpl {
+- SearchMapper mapper
++ void updateKeywordCount(String)
++ List<SearchDto> getTopSearchRankList(int)
+}
+
+
+class com.home.dto.InterestDto {
+- int id
+- long userId
+- int category
+- String interestId
+- String lng
+- String lat
+}
+
+class com.home.controller.InterestRestController {
+- InterestService interestService
++ ResponseEntity<?> findComplexList()
++ ResponseEntity<?> findSaleList()
++ ResponseEntity<?> registInterest(InterestDto)
++ ResponseEntity<?> delete(String)
+}
+
+
+interface com.home.mapper.CommentMapper {
+~ void create(CommentDto)
+~ CommentDto findById(long)
+~ CommentDetailDto findCommentDetailById(long)
+~ List<CommentDto> findByPostId(long)
+~ List<CommentDetailDto> findCommentDetailByPostId(long)
+~ List<CommentDto> findAll()
+~ void update(CommentDto)
+~ void delete(long)
+}
+
+interface com.home.mapper.AnnouncementMapper {
+~ void create(AnnouncementDto)
+~ AnnouncementDto findById(int)
+~ List<AnnouncementDto> findAll()
+~ void update(AnnouncementDto)
+~ void delete(int)
+}
+
+class com.home.controller.SearchRestController {
+- SearchService service
++ ResponseEntity<?> updateKeywordCount(String)
++ ResponseEntity<?> getSearchRankList(int)
+}
+
+
+class com.home.dto.HouseSimpleDto {
+- String aptName
+- String dongCode
+- String address
+- String lng
+- String lat
+- String thumbImg
+}
+
+class com.home.security.redis.config.RedisConfig {
++ RedisTemplate<String,String> redisTemplate(RedisConnectionFactory)
+}
+
+interface com.home.service.HouseSimpleService {
+~ List<HouseSimpleDto> findAptListByLngLatRange(String,String,String,String)
+~ List<DongCodeDto> findAptListGroupByDongByLngLatRange(String,String,String,String)
+~ List<HouseSimpleDto> findAptListByDongCode(String)
+~ List<HouseSimpleDto> findAptListByAptName(String)
+}
+
+class com.home.util.snowflake.SnowFlakeImpl {
+- {static} int UNUSED_BITS
+- {static} int EPOCH_BITS
+- {static} int NODE_ID_BITS
+- {static} int SEQUENCE_BITS
+- {static} int maxNodeId
+- {static} int maxSequence
+- {static} long CUSTOME_EPOCH
+- int nodeId
+- long lastTimestamp
+- long sequence
++ long generateSnowFlake()
+- long timestamp()
+- long waitNextMills(long)
+- int createNodeId()
+}
+
+
+interface com.home.mapper.DongCodeMapper {
+~ List<DongCodeDto> findAllSido()
+~ List<DongCodeDto> findGugunBySido(String)
+~ List<DongCodeDto> findDongByGugun(String)
+}
+
+class com.home.service.PostServiceImpl {
+- {static} String UPLOAD_DIR
+- PostMapper postMapper
+- MemberMapper memberMapper
++ long write(PostDto)
++ PostDto findById(long)
++ PostDetailDto findPostDetailById(long)
++ List<PostDetailDto> findByUserId(long)
++ List<PostDetailDto> findByEmail(String)
++ List<PostDto> findAll()
++ List<PostDetailDto> findAllPostDetail()
++ List<PostDetailDto> findAllPostDetail(int,int,String,String)
++ void modify(PostDto)
++ void delete(long)
++ void deletePostById(String,Long)
++ void hit(long)
++ int like(long)
++ String uploadImg(MultipartFile)
++ Resource serveFile(String)
+}
+
+
+interface com.home.service.MemberService {
++ Long join(MemberJoinDto)
++ JwtDto login(String,String)
++ void logout(String)
++ JwtDto refreshToken(String)
++ List<MemberDto> findMembers()
++ MemberDto findById(long)
++ MemberDto findByEmail(String)
++ void update(long,MemberDto)
++ void updateByEmail(String,MemberDto)
++ void delete(long)
++ void deleteByEmail(String)
++ String uploadImg(MultipartFile)
++ Resource serveFile(String)
+}
+
+class com.home.service.EmailServiceImpl {
+- JavaMailSender mailSender
+- String fromEmail
++ void sendEmail(String,String,String)
++ void sendPasswordResetEmail(String,String)
+}
+
+
+enum com.home.enums.role.UserRole {
++  ROLE_USER
++  ROLE_ADMIN
++  ROLE_GUEST
+- String value
+}
+
+interface com.home.service.PostService {
+~ long write(PostDto)
+~ PostDto findById(long)
+~ PostDetailDto findPostDetailById(long)
+~ List<PostDetailDto> findByUserId(long)
+~ List<PostDetailDto> findByEmail(String)
+~ List<PostDto> findAll()
+~ List<PostDetailDto> findAllPostDetail()
+~ List<PostDetailDto> findAllPostDetail(int,int,String,String)
+~ void modify(PostDto)
+~ void delete(long)
+~ void deletePostById(String,Long)
+~ void hit(long)
+~ int like(long)
+~ String uploadImg(MultipartFile)
+~ Resource serveFile(String)
+}
+
+class com.home.service.HouseInfoServiceImpl {
+- HouseInfoMapper mapper
++ List<HouseInfoDto> findAllbyDongCode(String)
++ List<HouseInfoDto> findAllbyKeyword(String)
+}
+
+
+class com.home.service.AnnouncementServiceImpl {
+- AnnouncementMapper announcementMapper
++ void write(AnnouncementDto)
++ AnnouncementDto findById(int)
++ List<AnnouncementDto> findAll()
++ void modify(AnnouncementDto)
++ void delete(int)
+}
+
+
+interface com.home.mapper.PasswordResetTokenMapper {
+~ void insertToken(PasswordResetTokenDto)
+~ PasswordResetTokenDto findByToken(String)
+~ void deleteByToken(String)
+}
+
+interface com.home.service.AnnouncementService {
+~ void write(AnnouncementDto)
+~ AnnouncementDto findById(int)
+~ List<AnnouncementDto> findAll()
+~ void modify(AnnouncementDto)
+~ void delete(int)
+}
+
+class com.home.dto.CommentDto {
+- long id
+- long userId
+- long postId
+- String content
+- Integer like
+- LocalDateTime createTime
+}
+
+class com.home.security.jwt.dto.AccessTokenDto {
+- String grantType
+- String accessToken
++ {static} void main(String[])
+}
+
+
+class com.home.service.HouseDetailServiceImpl {
+- HouseDetailMapper mapper
++ List<HouseDetailDto> findDetailInfoByApt(String,String)
+}
+
+
+class com.home.controller.CommentController {
+- CommentService commentService
++ ResponseEntity<?> write(CommentDto)
++ ResponseEntity<?> like(long)
++ ResponseEntity<?> findById(long)
++ ResponseEntity<?> modify(long,CommentDto)
++ ResponseEntity<?> delete(long)
+}
+
+
+class com.home.dto.AnnouncementViewDto {
+- String memberName
+- String subject
+- String content
+- int hit
+- Date registerTime
+}
+
+interface com.home.mapper.PasswordMapper {
+~ String findByEmail(String)
+~ void update(PasswordDto)
+}
+
+class com.home.dto.PostDetailDto {
+- long id
+- long userId
+- String name
+- String profileImgURL
+- String title
+- String content
+- String imgURL
+- Integer like
+- Integer hit
+- LocalDateTime createTime
+- List<CommentDetailDto> comments
+}
+
+class com.home.service.CommentServiceImpl {
+- CommentMapper commentMapper
++ long write(CommentDto)
++ CommentDto findById(long)
++ CommentDetailDto findCommentDetailById(long)
++ List<CommentDto> findByPostId(long)
++ List<CommentDetailDto> findCommentDetailByPostId(long)
++ List<CommentDto> findAll()
++ void modify(CommentDto)
++ void delete(long)
++ int like(long)
+}
+
+
+interface com.home.service.CommentService {
+~ long write(CommentDto)
+~ CommentDto findById(long)
+~ CommentDetailDto findCommentDetailById(long)
+~ List<CommentDto> findByPostId(long)
+~ List<CommentDetailDto> findCommentDetailByPostId(long)
+~ List<CommentDto> findAll()
+~ void modify(CommentDto)
+~ void delete(long)
+~ int like(long)
+}
+
+class com.home.security.jwt.AuthEntryPointJwt {
+- {static} Logger logger
++ void commence(HttpServletRequest,HttpServletResponse,AuthenticationException)
+}
+
+
+class com.home.dto.HouseSaleDto {
+- String id
+- String dongCode
+- String aptName
+- String description
+- String price
+- String lng
+- String lat
+- String img1
+- String img2
+- String img3
+- String img4
+- String img5
+- String floor
+- String size
+- String maintenance_cost
+}
+
+interface com.home.util.snowflake.SnowFlake {
+~ long generateSnowFlake()
+}
+
+interface com.home.mapper.PostMapper {
+~ void create(PostDto)
+~ PostDto findById(long)
+~ PostDetailDto findPostDetailById(long)
+~ List<PostDetailDto> findByUserId(long)
+~ List<PostDetailDto> findByEmail(String)
+~ List<PostDto> findAll()
+~ List<PostDetailDto> findAllPostDetail()
+~ List<PostDetailDto> findAllPostDetailWithPagination(int,int,String,String)
+~ void update(PostDto)
+~ void delete(long)
+}
+
+interface com.home.service.HouseDealService {
+~ List<HouseDealDto> findAllByAptCode(String)
+~ List<HouseDealDto> findAllByAptCode(String,int)
+~ List<HouseDealDto> findAllByAptCode(String,int,int)
+}
+
+interface com.home.mapper.HouseSaleMapper {
+~ List<HouseSaleDto> findSaleListByAptName(String,String)
+~ List<HouseSaleDto> findSaleListByLocation(String,String,String,String)
+~ List<HouseSaleDto> findSaleListByDongCode(String)
+~ List<HouseSaleDto> findSaleListByKeyword(String)
+~ List<HouseSaleDto> findSaleListById(String)
+}
+
+interface com.home.service.DongCodeService {
+~ List<DongCodeDto> findAllSido()
+~ List<DongCodeDto> findGugunBySido(String)
+~ List<DongCodeDto> findDongByGugun(String)
+}
+
+class com.home.DemoApplication {
++ {static} void main(String[])
+}
+
+interface com.home.service.InterestService {
+~ List<InterestDto> findAllUserInterestComplex()
+~ List<InterestDto> findAllUserInterestSale()
+~ void insertInterest(InterestDto)
+~ boolean deleteInterest(String)
+}
+
+class com.home.security.redis.service.JwtBlacklistService {
+- {static} String BLACKLIST_PREFIX
+- RedisTemplate<String,String> redisTemplate
++ void blacklistToken(String,long)
++ boolean isTokenBlacklisted(String)
+}
+
+
+class com.home.dto.MemberDto {
+- Long id
+- String email
+- String name
+- String password
+- String address
+- String phoneNumber
+- String imgURL
+- UserRole role
+}
+
+class com.home.controller.MemberController {
+- MemberService memberService
+~ String serviceName
++ {static} void main(String[])
++ ResponseEntity<?> checkHealth(HttpServletRequest)
++ ResponseEntity<String> uploadFile(MultipartFile)
++ ResponseEntity<?> serveFile(String)
++ ResponseEntity<?> test(HttpServletRequest)
++ ResponseEntity<?> join(MemberJoinDto)
++ ResponseEntity<?> login(MemberDto)
++ ResponseEntity<?> refreshAccessToken(HttpServletRequest)
++ ResponseEntity<?> getProfile(Principal)
++ ResponseEntity<?> modify(MemberDto)
++ ResponseEntity<?> leave()
++ ResponseEntity<?> logout(HttpServletRequest)
+- String resolveToken(HttpServletRequest)
+}
+
+
+class com.home.service.PasswordServiceImpl {
+- PasswordEncoder passwordEncoder
+- PasswordMapper passwordMapper
++ void changePassword(PasswordDto)
+- void validateCurPassword(String,String)
++ void validatePasswordSame(String,String)
++ void validatePassword(String)
+- {static} boolean patternMatches(String,String)
+}
+
+
+interface com.home.mapper.HouseInfoMapper {
+~ List<HouseInfoDto> findAllbyDongCode(String)
+~ List<HouseInfoDto> findAllbyKeyword(String)
+}
+
+class com.home.dto.ProfileDto {
+- long id
+- String email
+- String name
+- String address
+- String phoneNumber
+- String imgURL
+}
+
+interface com.home.service.EmailService {
++ void sendEmail(String,String,String)
++ void sendPasswordResetEmail(String,String)
+}
+
+class com.home.dto.PostDto {
+- long id
+- long userId
+- String title
+- String content
+- String imgURL
+- Integer like
+- Integer hit
+- LocalDateTime createTime
+- List<CommentDto> comments
+}
+
+class com.home.service.HouseSaleServiceImpl {
+- HouseSaleMapper mapper
++ List<HouseSaleDto> findSaleListByAptName(String,String)
++ List<HouseSaleDto> findSaleListByLocation(String,String,String,String)
++ List<HouseSaleDto> findSaleListByDongCode(String)
++ List<HouseSaleDto> findSaleListByKeyword(String)
++ List<HouseSaleDto> findSaleListById(String)
+}
+
+
+interface com.home.mapper.RefreshTokenMapper {
++ String findByToken(String)
+}
+
+class com.home.service.InterestServiceImpl {
+- InterestMapper interestMapper
+- MemberMapper memberMapper
++ List<InterestDto> findAllUserInterestComplex()
++ List<InterestDto> findAllUserInterestSale()
++ void insertInterest(InterestDto)
++ boolean deleteInterest(String)
+}
+
+
+class com.home.dto.MemberJoinDto {
+- Long id
+- String email
+- String name
+- String password
+- String confirmPassword
+- String address
+- String phoneNumber
+- String imgURL
+- UserRole role
++ MemberDto toMemberDto()
+}
+
+
+class com.home.controller.PasswordController {
+- PasswordService passwordService
++ ResponseEntity<?> changePassword(PasswordDto)
+}
+
+
+interface com.home.service.SearchService {
+~ void updateKeywordCount(String)
+~ List<SearchDto> getTopSearchRankList(int)
+}
+
+class com.home.security.jwt.dto.RefreshTokenDto {
+- String grantType
+- String refreshToken
++ {static} void main(String[])
+}
+
+
+interface com.home.service.HouseSaleService {
+~ List<HouseSaleDto> findSaleListByAptName(String,String)
+~ List<HouseSaleDto> findSaleListByLocation(String,String,String,String)
+~ List<HouseSaleDto> findSaleListByDongCode(String)
+~ List<HouseSaleDto> findSaleListByKeyword(String)
+~ List<HouseSaleDto> findSaleListById(String)
+}
+
+interface com.home.service.HouseDetailService {
+~ List<HouseDetailDto> findDetailInfoByApt(String,String)
+}
+
+class com.home.BeanCreationTest {
+~ DataSource ds
+~ DongCodeMapper mapper
+~ DongCodeService service
+~ void test()
+}
+
+
+interface com.home.service.PasswordService {
+~ void changePassword(PasswordDto)
+~ void validatePasswordSame(String,String)
+~ void validatePassword(String)
+}
+
+class com.home.security.jwt.detail.CustomUserDetailService {
+- MemberMapper memberMapper
++ UserDetails loadUserByUsername(String)
+- UserDetails createUserDetails(MemberDto)
+}
+
+
+class com.home.dto.PasswordResetTokenDto {
+- Long id
+- String token
+- String email
+- LocalDateTime expiryDate
+}
+
+interface com.home.mapper.HouseDetailMapper {
+~ List<HouseDetailDto> findDetailInfoByApt(String,String)
+}
+
+class com.home.service.HouseDealServiceImpl {
+- HouseDealMapper mapper
++ List<HouseDealDto> findAllByAptCode(String)
++ List<HouseDealDto> findAllByAptCode(String,int)
++ List<HouseDealDto> findAllByAptCode(String,int,int)
+}
+
+
+class com.home.dto.DongCodeDto {
+- String dongCode
+- String sidoName
+- String gugunName
+- String dongName
+- List<HouseSimpleDto> aptList
+- int aptListCount
+}
+
+class com.home.controller.PasswordResetController {
+- MemberService memberService
+- EmailService emailService
+- PasswordResetTokenMapper tokenMapper
+- PasswordEncoder passwordEncoder
+- PasswordService passwordService
++ ResponseEntity<String> requestPasswordReset(String)
++ ResponseEntity<String> resetPassword(String,PasswordDto)
++ ResponseEntity<String> validateToken(String)
+}
+
+
+class com.home.service.MemberServiceImpl {
+- {static} String UPLOAD_DIR
+- MemberMapper memberMapper
+- RefreshTokenMapper refreshTokenMapper
+- SnowFlake snowFlake
+- AuthenticationManagerBuilder authenticationManagerBuilder
+- JwtDtoProvider jwtDtoProvider
+- PasswordEncoder passwordEncoder
+- JwtBlacklistService jwtBlacklistService
+- {static} boolean patternMatches(String,String)
++ Long join(MemberJoinDto)
+- void validatePasswordSame(String,String)
+- void validateEmail(String)
+- void validatePassword(String)
+- void validateAddress(String)
+- void validatePhoneNumber(String)
++ JwtDto login(String,String)
++ void logout(String)
++ List<MemberDto> findMembers()
++ MemberDto findById(long)
++ MemberDto findByEmail(String)
++ void update(long,MemberDto)
++ void updateByEmail(String,MemberDto)
++ void delete(long)
++ void deleteByEmail(String)
++ String uploadImg(MultipartFile)
++ Resource serveFile(String)
+- void validateDuplicateMember(MemberDto)
+- void validateDuplicateMember(String)
++ JwtDto refreshToken(String)
+}
+
+
+class com.home.dto.HouseDetailDto {
+- String complexNo
+- String aptName
+- String dongCode
+- String address
+- String dongAddress
+- String roadAddress
+- String houseHoldCount
+- String highFloor
+- String lowFloor
+- String useApproveYmd
+- String totalDongCount
+- String parkingPossibleCount
+- String parkingCountByHousehold
+- String heatMethodTypeCode
+- String heatFuelTypeCode
+- String pyoengNames
+- String lat
+- String lng
+- String images
+- String images2
+- String images3
+- String images4
+- String images5
+}
+
+class com.home.security.jwt.JwtAuthenticationFilter {
+- JwtDtoProvider jwtDtoProvider
+- JwtBlacklistService jwtBlacklistService
++ void doFilter(ServletRequest,ServletResponse,FilterChain)
+- String resolveToken(HttpServletRequest)
+}
+
+
+class com.home.controller.AnnouncementController {
+- AnnouncementService announcementService
+- MemberService memberService
++ ResponseEntity<String> status(HttpServletRequest)
++ ResponseEntity<?> write(AnnouncementDto)
++ ResponseEntity<?> list()
++ ResponseEntity<?> getAnnouncement(int)
++ ResponseEntity<?> modify(int,AnnouncementDto)
++ ResponseEntity<?> delete(int)
+}
+
+
+class com.home.controller.PostController {
+- PostService postService
++ ResponseEntity<?> findAll(int,int,String,String)
++ ResponseEntity<?> write(PostDto)
++ ResponseEntity<?> like(long)
++ ResponseEntity<?> findById(long)
++ ResponseEntity<?> findByEmail()
++ ResponseEntity<?> modify(long,PostDto)
++ ResponseEntity<?> delete(long)
++ ResponseEntity<String> uploadFile(MultipartFile)
++ ResponseEntity<?> serveFile(String)
+}
+
+
+interface com.home.service.HouseInfoService {
+~ List<HouseInfoDto> findAllbyDongCode(String)
+~ List<HouseInfoDto> findAllbyKeyword(String)
+}
+
+class com.home.security.jwt.JwtResult {
+- String grantType
+- String accessToken
+- String refreshToken
+}
+
+interface com.home.mapper.SearchMapper {
+~ void insertKeyword(String)
+~ SearchDto isExistKeyword(String)
+~ void updateKeywordCnt(String)
+~ List<SearchDto> getAll()
+}
+
+interface com.home.mapper.InterestMapper {
+~ List<InterestDto> findAllUserInterestComplex(long)
+~ List<InterestDto> findAllUserInterestSale(long)
+~ InterestDto findInterestByUserAndInterestId(long,String)
+~ InterestDto findInterestById(int)
+~ void insertInterest(InterestDto)
+~ void deleteInterest(int)
+}
+
+class com.home.controller.DongCodeRestController {
+- DongCodeService service
++ ResponseEntity<?> getAllSidoList()
++ ResponseEntity<?> getAllGugunList(String)
++ ResponseEntity<?> getAllDongList(String)
+}
+
+
+class com.home.controller.HouseInfoRestController {
+- HouseInfoService infoService
+- HouseSimpleService simpleService
+- HouseDetailService detailService
+- HouseSaleService saleService
++ ResponseEntity<?> getHouseInfoListByKeyword(String)
++ ResponseEntity<?> getHouseInfoByRange(String,String,String,String)
++ ResponseEntity<?> getHouseInfoByDongCode(String)
++ ResponseEntity<?> getHouseInfoGroupByRange(String,String,String,String)
++ ResponseEntity<?> getHouseDetailInfo(String,String)
++ ResponseEntity<?> getHouseSaleInfoByComplex(String,String)
++ ResponseEntity<?> getHouseSaleInfoByLocation(String,String,String,String)
++ ResponseEntity<?> getHouseSaleInfoByDongCode(String)
++ ResponseEntity<?> getHouseSaleInfoById(String)
++ ResponseEntity<?> getHouseSaleInfoByKeyword(String)
+}
+
+
+class com.home.service.HouseSimpleServiceImpl {
+- HouseSimpleMapper mapper
++ List<HouseSimpleDto> findAptListByLngLatRange(String,String,String,String)
++ List<DongCodeDto> findAptListGroupByDongByLngLatRange(String,String,String,String)
++ List<HouseSimpleDto> findAptListByDongCode(String)
++ List<HouseSimpleDto> findAptListByAptName(String)
+}
+
+
+class com.home.security.jwt.JwtDtoProvider {
+- PublicKey publicKey
+- PrivateKey privateKey
+- UserDetailsService userDetailService
++ JwtDto generateToken(Authentication)
++ AccessTokenDto getAccessToken(JwtDto)
++ RefreshTokenDto getRefreshToken(JwtDto)
+- PublicKey getPublicKey()
+- PrivateKey getPrivateKey()
++ Authentication getAuthentication(String)
++ JwtDto generateJwtDtoByRefreshToken(String)
++ boolean validateToken(String)
++ boolean validateRefreshToken(String)
++ Claims parseClaims(String)
++ Date getExpiration(String)
++ String getName(String)
+}
+
+
+class com.home.dto.SearchDto {
+- String keyword
+- int count
++ int compareTo(SearchDto)
+}
+
+
+class com.home.security.jwt.detail.MemberDetails {
+~ MemberDto memberDto
+- Collection<? extends GrantedAuthority> authorities
++ Collection<? extends GrantedAuthority> getAuthorities()
++ String getPassword()
++ String getUsername()
++ boolean isAccountNonExpired()
++ boolean isAccountNonLocked()
++ boolean isCredentialsNonExpired()
++ boolean isEnabled()
+}
+
+
+class com.home.security.config.SecurityConfig {
+- JwtDtoProvider jwtDtoProvider
+- JwtBlacklistService jwtBlacklistService
+- AuthEntryPointJwt unauthorizedHandler
++ SecurityFilterChain filterChain(HttpSecurity)
++ PasswordEncoder passwordEncoder()
+~ CorsConfigurationSource corsConfigurationSource()
+}
+
+
+class com.home.dto.AnnouncementDto {
+- int announcementNo
+- long memberId
+- String memberName
+- boolean isAdmin
+- String subject
+- String content
+- int hit
+- Date registerTime
+}
+
+
+
+com.home.service.DongCodeService <|.. com.home.service.DongCodeServiceImpl
+com.home.service.SearchService <|.. com.home.service.SearchServiceImpl
+com.home.util.snowflake.SnowFlake <|.. com.home.util.snowflake.SnowFlakeImpl
+com.home.service.PostService <|.. com.home.service.PostServiceImpl
+com.home.service.EmailService <|.. com.home.service.EmailServiceImpl
+com.home.service.HouseInfoService <|.. com.home.service.HouseInfoServiceImpl
+com.home.service.AnnouncementService <|.. com.home.service.AnnouncementServiceImpl
+com.home.service.HouseDetailService <|.. com.home.service.HouseDetailServiceImpl
+com.home.service.CommentService <|.. com.home.service.CommentServiceImpl
+org.springframework.security.web.AuthenticationEntryPoint <|.. com.home.security.jwt.AuthEntryPointJwt
+com.home.service.PasswordService <|.. com.home.service.PasswordServiceImpl
+com.home.service.HouseSaleService <|.. com.home.service.HouseSaleServiceImpl
+com.home.service.InterestService <|.. com.home.service.InterestServiceImpl
+org.springframework.security.core.userdetails.UserDetailsService <|.. com.home.security.jwt.detail.CustomUserDetailService
+com.home.service.HouseDealService <|.. com.home.service.HouseDealServiceImpl
+com.home.service.MemberService <|.. com.home.service.MemberServiceImpl
+org.springframework.web.filter.GenericFilterBean <|-- com.home.security.jwt.JwtAuthenticationFilter
+com.home.service.HouseSimpleService <|.. com.home.service.HouseSimpleServiceImpl
+com.home.dto.Comparable <|.. com.home.dto.SearchDto
+org.springframework.security.core.userdetails.UserDetails <|.. com.home.security.jwt.detail.MemberDetails
+@enduml
