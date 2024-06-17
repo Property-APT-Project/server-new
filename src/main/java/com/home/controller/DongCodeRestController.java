@@ -26,7 +26,7 @@ public class DongCodeRestController {
 	@GetMapping("/dong-code/sido")
 	public ResponseEntity<?> getAllSidoList(){
 		try {
-			List<DongCodeDto> sidoList= service.findAllSido();
+			List<DongCodeDto> sidoList = service.findAllSido();
 			return ResponseEntity.status(HttpStatus.OK).body(sidoList);
 		} catch (Exception e) {
 			e.printStackTrace();

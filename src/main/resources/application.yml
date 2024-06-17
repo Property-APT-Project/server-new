@@ -11,9 +11,9 @@ spring:
 #datasource
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/house?serverTimezone=UTC&useUniCode=yes&characterEncoding=UTF-8
-    username: ssafy
-    password: ssafyssafy
+    url: jdbc:mysql://housedb.czoe4uy2qt7o.ap-southeast-2.rds.amazonaws.com:3306/house?serverTimezone=UTC&useUniCode=yes&characterEncoding=UTF-8
+    username: houseadmin
+    password: housepj1809
 
 #redis
   redis:
